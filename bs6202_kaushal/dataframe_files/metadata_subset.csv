@@ -1,0 +1,266 @@
+geo_accession,title,triple_negative_status,tnbc_subtype,submission_date,er,her2,pr,race,set,gender,age_years
+GSM1974566,S1-H10,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974567,S1-H14,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,41
+GSM1974568,S1-H19,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,55
+GSM1974569,S1-H20B,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,55
+GSM1974570,S1-H22,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,65
+GSM1974571,S1-H27,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,40
+GSM1974572,S1-H28,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,66
+GSM1974573,S1-H29,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,57
+GSM1974574,S1-H2B,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974575,S1-H31,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,55
+GSM1974576,S1-H35B,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,44
+GSM1974577,S1-H36,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,78
+GSM1974578,S1-H38,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,54
+GSM1974579,S1-H3B,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,71
+GSM1974580,S1-H40,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,37
+GSM1974581,S1-H41,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,51
+GSM1974582,S1-H43,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,64
+GSM1974583,S1-H44,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974584,S1-H45,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,58
+GSM1974585,S1-H46,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,64
+GSM1974586,S1-H47,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974587,S1-H48,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974588,S1-H49,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,NA
+GSM1974589,S1-H4B,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,73
+GSM1974590,S1-H50,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,56
+GSM1974591,S1-H51,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,43
+GSM1974592,S1-H52,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,67
+GSM1974593,S1-H53,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,43
+GSM1974594,S1-H58B,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,69
+GSM1974595,S1-H59,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,54
+GSM1974596,S1-H6,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,49
+GSM1974597,S1-H60,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,83
+GSM1974598,S1-H61,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,50
+GSM1974599,S1-H62,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,44
+GSM1974600,S1-H63,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,68
+GSM1974601,S1-H64,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,67
+GSM1974602,S1-H65,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,64
+GSM1974603,S1-H66,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,59
+GSM1974604,S1-H67,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,47
+GSM1974605,S1-H68,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,68
+GSM1974606,S1-H69,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,57
+GSM1974607,S1-H7,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,58
+GSM1974608,S1-H70,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974609,S1-H71,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,57
+GSM1974610,S1-H72B,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,66
+GSM1974611,S1-H73,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,39
+GSM1974612,S1-H8,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,71
+GSM1974613,S1-H9,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,59
+GSM1974614,S2-H54B,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,67
+GSM1974615,S2-H55B,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,49
+GSM1974616,S2-H56B,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974617,S2-H57C,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,74
+GSM1974618,S2-H76,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,70
+GSM1974619,S2-H77,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,75
+GSM1974620,S2-H78,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,26
+GSM1974621,S2-H79,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,55
+GSM1974622,S2-H80,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,59
+GSM1974623,S2-H81,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974624,S2-H82,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,56
+GSM1974625,S2-H83,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,57
+GSM1974626,S2-H84,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,47
+GSM1974627,S2-H85B,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,38
+GSM1974628,S2-H88,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974629,S2-H89,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,64
+GSM1974630,S2-H90,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,61
+GSM1974631,S2-H91B,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,50
+GSM1974632,S3-H100,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974633,S3-H102,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,32
+GSM1974634,S3-H103,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,41
+GSM1974635,S3-H104,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,66
+GSM1974636,S3-H105,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Asian,Validation TN,Female,39
+GSM1974637,S3-H106,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,61
+GSM1974638,S3-H107,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,60
+GSM1974639,S3-H108,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,55
+GSM1974640,S3-H109,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,35
+GSM1974641,S3-H110,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,58
+GSM1974642,S3-H111,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974643,S3-H113,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,80
+GSM1974644,S3-H114,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,58
+GSM1974645,S3-H115,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,53
+GSM1974646,S3-H116,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,64
+GSM1974647,S3-H117,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,45
+GSM1974648,S3-H118,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,48
+GSM1974649,S3-H119,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,50
+GSM1974650,S3-H120,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,43
+GSM1974651,S3-H121,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,69
+GSM1974652,S3-H122,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,45
+GSM1974653,S3-H123,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,76
+GSM1974654,S3-H124,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Asian,Validation TN,Female,55
+GSM1974655,S3-H125,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,42
+GSM1974656,S3-H126,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,57
+GSM1974657,S3-H127,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,70
+GSM1974658,S3-H128,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,73
+GSM1974659,S3-H129,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,42
+GSM1974660,S3-H130,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,42
+GSM1974661,S3-H131,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,38
+GSM1974662,S3-H132,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,53
+GSM1974663,S3-H133,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,36
+GSM1974664,S3-H134,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,47
+GSM1974665,S3-H135,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,56
+GSM1974666,S3-H136,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,70
+GSM1974667,S3-H137,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,72
+GSM1974668,S3-H138,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,44
+GSM1974669,S3-H139,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,51
+GSM1974670,S3-H140,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,70
+GSM1974671,S3-H141,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,65
+GSM1974672,S3-H142,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,45
+GSM1974673,S3-H143,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,62
+GSM1974674,S3-H144,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,32
+GSM1974675,S3-H145,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,38
+GSM1974676,S3-H146,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,43
+GSM1974677,S3-H147,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,32
+GSM1974678,S3-H148,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,49
+GSM1974679,S3-H149,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,50
+GSM1974680,S3-H150,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,86
+GSM1974681,S3-H151,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,66
+GSM1974682,S3-H152,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,69
+GSM1974683,S3-H153,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,60
+GSM1974684,S3-H154,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,47
+GSM1974685,S3-H155,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,57
+GSM1974686,S3-H156,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,44
+GSM1974687,S3-H157,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,45
+GSM1974688,S3-H158,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,32
+GSM1974689,S3-H159,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,62
+GSM1974690,S3-H160,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Asian/Pacific Islander,Discovery TN,Female,48
+GSM1974691,S3-H161,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Asian/Pacific Islander,Discovery TN,Female,36
+GSM1974692,S3-H162,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,53
+GSM1974693,S3-H163,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,39
+GSM1974694,S3-H164,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,NA,Discovery TN,Female,44
+GSM1974695,S3-H165,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,43
+GSM1974696,S3-H166,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,67
+GSM1974697,S3-H167,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,80
+GSM1974698,S3-H168,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,65
+GSM1974699,S3-H170,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,46
+GSM1974700,S3-H171,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,54
+GSM1974701,S3-H172,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,51
+GSM1974702,S3-H173,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,46
+GSM1974703,S3-H174,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,73
+GSM1974704,S3-H175,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,73
+GSM1974705,S3-H176,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,NA,Discovery TN,Female,39
+GSM1974706,S3-H177,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,49
+GSM1974707,S3-H178,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,51
+GSM1974708,S3-H179,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,39
+GSM1974709,S3-H180,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,42
+GSM1974710,S3-H181,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,54
+GSM1974711,S3-H182,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,69
+GSM1974712,S3-H183,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Asian/Pacific Islander,Discovery TN,Female,75
+GSM1974713,S3-H184,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,35
+GSM1974714,S3-H185,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,38
+GSM1974715,S3-H186,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,49
+GSM1974716,S3-H187,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,57
+GSM1974717,S3-H188,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Asian/Pacific Islander,Discovery TN,Female,65
+GSM1974718,S3-H189,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,48
+GSM1974719,S3-H190,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,66
+GSM1974720,S3-H191,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,55
+GSM1974721,S3-H193,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,42
+GSM1974722,S3-H194,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,71
+GSM1974723,S3-H196,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,72
+GSM1974724,S3-H197,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,45
+GSM1974725,S3-H198,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,75
+GSM1974726,S3-H199,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,67
+GSM1974727,S3-H200,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,41
+GSM1974728,S3-H201,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,39
+GSM1974729,S3-H202,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,38
+GSM1974730,S3-H203,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,50
+GSM1974731,S3-H204,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,57
+GSM1974732,S3-H205,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,44
+GSM1974733,S3-H206,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,39
+GSM1974734,S3-H207,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,36
+GSM1974735,S3-H208,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,63
+GSM1974736,S3-H209,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,66
+GSM1974737,S3-H210,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,47
+GSM1974738,S3-H211,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,44
+GSM1974739,S3-H212,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,49
+GSM1974740,S3-H213,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,76
+GSM1974741,S3-H214,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,61
+GSM1974742,S3-H215,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,45
+GSM1974743,S3-H216,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,60
+GSM1974744,S3-H217,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Asian,Discovery TN,Female,46
+GSM1974745,S3-H218,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,51
+GSM1974746,S3-H219,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,70
+GSM1974747,S3-H220,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,38
+GSM1974748,S3-H221,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,36
+GSM1974749,S3-H222,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,44
+GSM1974750,S3-H224,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,47
+GSM1974751,S3-H225,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,60
+GSM1974752,S3-H226,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,65
+GSM1974753,S3-H227,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,NA,Discovery TN,Female,87
+GSM1974754,S3-H228,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,NA,Discovery TN,Female,66
+GSM1974755,S3-H229,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,48
+GSM1974756,S3-H230,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Discovery TN,Female,48
+GSM1974757,S3-H93C,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,59
+GSM1974758,S3-H94C,TN,Basal-Like Immune-Activated (BLIA),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,51
+GSM1974759,S3-H95C,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,53
+GSM1974760,S3-H96C,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,85
+GSM1974761,S3-H97C,TN,Basal-Like Immune-Suppressed (BLIS),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,49
+GSM1974762,S3-H98C,TN,Mesenchymal (MES),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,72
+GSM1974763,S3-H99C,TN,Luminal-AR (LAR),Dec 17 2015,Negative,Negative,Negative,Caucasian,Validation TN,Female,47
+GSM1978883,S1-H11,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,51
+GSM1978884,S1-H12,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,NA
+GSM1978885,S1-H13,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,50
+GSM1978886,S1-H15,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,55
+GSM1978887,S1-H16,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,69
+GSM1978888,S1-H17,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,35
+GSM1978889,S1-H18,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,NA
+GSM1978890,S1-H1B,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,51
+GSM1978891,S1-H21,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,70
+GSM1978892,S1-H23,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,76
+GSM1978893,S1-H25,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,51
+GSM1978894,S1-H30,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,53
+GSM1978895,S1-H32,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,62
+GSM1978896,S1-H37,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,34
+GSM1978897,S1-H39,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,72
+GSM1978898,S1-H42,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,59
+GSM1978899,S1-H5,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,49
+GSM1978900,S3-H195,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,45
+GSM1978901,S3-H223,not TN,Not Applicable,Dec 22 2015,Negative,Positive,Negative,Caucasian,Validation not TN,Female,87
+GSM1978902,S4-H231,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,42
+GSM1978903,S4-H232,not TN,Not Applicable,Dec 22 2015,Positive,NA,Negative,Caucasian,Validation not TN,Female,55
+GSM1978904,S4-H233,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,59
+GSM1978905,S4-H234,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,39
+GSM1978906,S4-H235,not TN,Not Applicable,Dec 22 2015,Positive,Positive,Negative,Caucasian,Validation not TN,Female,49
+GSM1978907,S4-H236,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,60
+GSM1978908,S4-H237,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,61
+GSM1978909,S4-H238,not TN,Not Applicable,Dec 22 2015,Positive,Positive,Positive,Caucasian,Validation not TN,Female,60
+GSM1978910,S4-H239,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,61
+GSM1978911,S4-H240,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,65
+GSM1978912,S4-H241,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,68
+GSM1978913,S4-H242,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,46
+GSM1978914,S4-H243,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,53
+GSM1978915,S4-H244,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Negative,Caucasian,Validation not TN,Female,NA
+GSM1978916,S4-H245,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,48
+GSM1978917,S4-H246,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,61
+GSM1978918,S4-H247,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,56
+GSM1978919,S4-H248,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,45
+GSM1978920,S4-H249,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,73
+GSM1978921,S4-H250,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,69
+GSM1978922,S4-H251,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Negative,Caucasian,Validation not TN,Female,65
+GSM1978923,S4-H252,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,56
+GSM1978924,S4-H253,not TN,Not Applicable,Dec 22 2015,Positive,NA,Negative,Caucasian,Validation not TN,Female,79
+GSM1978925,S4-H254,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,54
+GSM1978926,S4-H255,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,54
+GSM1978927,S4-H256,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,52
+GSM1978928,S4-H257,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,75
+GSM1978929,S4-H258,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,42
+GSM1978930,S4-H259,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,72
+GSM1978931,S4-H261,not TN,Not Applicable,Dec 22 2015,Positive,NA,Negative,Caucasian,Validation not TN,Female,59
+GSM1978932,S4-H262,not TN,Not Applicable,Dec 22 2015,Positive,Positive,Positive,Caucasian,Validation not TN,Female,44
+GSM1978933,S4-H263,not TN,Not Applicable,Dec 22 2015,Positive,NA,Negative,Caucasian,Validation not TN,Female,71
+GSM1978934,S4-H264,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,56
+GSM1978935,S4-H265,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,71
+GSM1978936,S4-H266,not TN,Not Applicable,Dec 22 2015,Positive,Positive,Positive,Caucasian,Validation not TN,Female,44
+GSM1978937,S4-H267,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,59
+GSM1978938,S4-H268,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,77
+GSM1978939,S4-H269,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,64
+GSM1978940,S4-H270,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,46
+GSM1978941,S4-H271,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,62
+GSM1978942,S4-H272,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,69
+GSM1978943,S4-H273,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,52
+GSM1978944,S4-H274,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,68
+GSM1978945,S4-H275,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,52
+GSM1978946,S4-H276,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,72
+GSM1978947,S4-H278,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,61
+GSM1978948,S4-H279,not TN,Not Applicable,Dec 22 2015,Positive,NA,Positive,Caucasian,Validation not TN,Female,69
+GSM1978949,S4-H280,not TN,Not Applicable,Dec 22 2015,Positive,Negative,Positive,Caucasian,Validation not TN,Female,71

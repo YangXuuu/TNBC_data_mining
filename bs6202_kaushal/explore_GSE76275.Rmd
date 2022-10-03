@@ -1,0 +1,1111 @@
+---
+title: "Explore GSE76275"
+output: 
+  html_notebook:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+# Loading libraries
+
+```{r}
+library(GEOquery)
+library(oligo)
+# library(affy)
+library(limma)
+library(sva)
+library(tidyverse)
+library(ggsci)
+library(factoextra)
+library(pheatmap)
+library(dendextend)
+library(caret)
+library(RColorBrewer)
+# library(viridis)
+```
+
+
+# Custom functions
+
+```{r}
+# given a matrix, perform min-max scaling on its columns
+min_max_mat <- function(mat){
+  mat_rescaled <- apply(mat, 2, function(v){
+    v_range <- range(v)
+    names(v_range) <- c("minimum", "maximum")
+    range_difference <- v_range["maximum"] - v_range["minimum"]
+    rescaled <- (v - v_range["minimum"])/range_difference
+    return(rescaled)
+  })
+  return(mat_rescaled)
+}
+```
+
+# Getting data from GEOquery
+
+```{r}
+# geodata <- GEOquery::getGEO(GEO = "GSE76275", destdir = "./tempfiles")
+# geodata <- GEOquery::getGEO(filename = "./tempfiles/GSE76275_series_matrix.txt.gz")
+```
+
+
+```{r}
+# saveRDS(geodata, "geodata.RDS")
+geodata <- readRDS("geodata.RDS")
+```
+
+
+```{r}
+# mdata <- geodata %>% 
+#   pluck(1) %>% 
+#   phenoData() %>%
+#   pData() %>% as_tibble()
+```
+
+
+```{r}
+# feature_data <- geodata %>% 
+#   pluck(1) %>% 
+#   featureData()
+  
+```
+
+
+```{r}
+# write_csv(mdata, "raw_mdata.csv")
+mdata <- read_csv("raw_mdata.csv")
+```
+
+
+```{r}
+# saveRDS(feature_data, "featureData.RDS")
+# feature_data <- readRDS("featureData.RDS")
+```
+
+# Inspecting and cleaning the metadata
+
+```{r}
+mdata %>% 
+  glimpse()
+```
+
+
+```{r}
+mdata <- mdata %>% 
+  select(title, contains("date"), geo_accession, contains(":ch1"))
+
+colnames(mdata)
+  
+```
+
+
+```{r}
+cnames <- colnames(mdata)
+```
+
+
+```{r}
+cnames_processed <- str_split(cnames, pattern = ":") %>% 
+  map_chr(~{.x[[1]]}) %>% 
+  str_replace_all(" ", "_") %>% 
+  str_replace_all("-", "_") %>% 
+  str_remove_all("\\(|\\)|,")
+
+cnames_processed
+```
+
+
+```{r}
+colnames(mdata) <- cnames_processed
+rm(cnames, cnames_processed)
+```
+
+
+```{r}
+glimpse(mdata)
+```
+
+
+```{r}
+# mdata %>% 
+  # distinct(triple_negative_status, tnbc_subtype)
+  # distinct(submission_date, triple_negative_status)
+  # distinct(tnbc_subtype, triple_negative_status)
+  # distinct(histology, histology_group)
+  # distinct(er, her2, pr, triple_negative_status)
+```
+
+Looking at the number of samples for each combination of set and each condition.
+
+```{r}
+mdata %>% 
+  count(triple_negative_status, set)
+```
+
+
+# Reading in raw probe intensity data
+
+Celfiles downloaded from GEO and kept the folder celfiles/
+
+```{r}
+celFiles <- list.celfiles('celfiles/', full.names = TRUE, listGzipped = TRUE)
+celFiles %>% head()
+```
+
+
+
+```{r}
+names(celFiles) <- celFiles %>% 
+  basename() %>% 
+  str_split("\\.") %>% 
+  map_chr(~{.x[1]}) %>% 
+  str_split("_") %>% 
+  map_chr(~{.x[1]}) 
+
+head(celFiles)
+```
+
+
+```{r}
+head(mdata)
+```
+
+```{r}
+mdata <- mdata[match(mdata$geo_accession, names(celFiles)), ]
+```
+
+
+Getting only the relevant variables from the metadata.
+
+
+```{r}
+mdata_subset <- mdata %>%
+  select(geo_accession, 
+         title, 
+         triple_negative_status, 
+         tnbc_subtype,
+         submission_date,
+         er,
+         her2,
+         pr,
+         race,
+         set,
+         gender, 
+         age_years) %>% 
+  mutate(across(where(is.character), .fns = factor)) %>% 
+  mutate(tnbc_subtype = if_else(is.na(as.character(tnbc_subtype)), "Not Applicable", as.character(tnbc_subtype))) %>% 
+  mutate(tnbc_subtype = factor(tnbc_subtype)) %>% 
+  as.data.frame()
+
+
+rownames(mdata_subset) <- as.character(mdata_subset$geo_accession)
+
+head(mdata_subset)
+
+```
+
+```{r}
+# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+```
+
+
+```{r}
+# saveRDS(object = rawData, "rawData.RDS")
+rawData <- readRDS("rawData.RDS")
+```
+
+Looking at the dimensions of the raw expression matrix.
+
+```{r}
+exprs(rawData) %>% dim()
+```
+
+
+## Using regular rma on data (without separating by class)
+
+```{r}
+# res_1 <- rma(rawData)
+```
+
+
+```{r}
+# saveRDS(object = res_1, "res_1.RDS")
+res_1 <- readRDS("res_1.RDS")
+```
+
+
+```{r}
+exprs(res_1) %>% 
+  dim()
+```
+
+
+```{r}
+exprs(res_1)[1:5, 1:5]
+```
+
+
+## Performing class-specific RMA by reading in the expression sets separately
+
+
+Getting lists of the TNBC samples and the non-TNBC samples.
+
+```{r}
+tnbc_samples <- mdata_subset %>% 
+  filter(triple_negative_status == "TN") %>% 
+  select(geo_accession) %>% 
+  unlist(use.names = F) %>% 
+  as.character()
+
+head(tnbc_samples)
+
+nontnbc_samples <- mdata_subset %>% 
+  filter(triple_negative_status == "not TN") %>% 
+  select(geo_accession) %>% 
+  unlist(use.names = F) %>% 
+  as.character()
+
+head(nontnbc_samples)
+```
+
+
+Creating different metadata tables for TNBC and nonTNBC.
+
+```{r}
+mdata_subset_tnbc <- mdata_subset[tnbc_samples, ]
+dim(mdata_subset_tnbc)
+mdata_subset_nontnbc <- mdata_subset[nontnbc_samples, ]
+dim(mdata_subset_nontnbc)
+```
+
+
+Reading in the TNBC files.
+
+```{r}
+# rawData_tnbc <- read.celfiles(filenames = celFiles[tnbc_samples], 
+#                               phenoData = AnnotatedDataFrame(mdata_subset_tnbc))
+# 
+# rawData_tnbc
+```
+
+
+```{r}
+# saveRDS(rawData_tnbc, file = "rawData_tnbc.RDS")
+rawData_tnbc <- readRDS(file = "rawData_tnbc.RDS")
+```
+
+```{r}
+rawData_tnbc
+```
+
+
+Reading in the nonTNBC files.
+
+```{r}
+# rawData_nontnbc <- read.celfiles(filenames = celFiles[nontnbc_samples], 
+#                               phenoData = AnnotatedDataFrame(mdata_subset_nontnbc))
+# 
+# rawData_nontnbc
+```
+
+
+
+```{r}
+# saveRDS(rawData_nontnbc, file = "rawData_nontnbc.RDS")
+rawData_nontnbc <- readRDS(file = "rawData_nontnbc.RDS")
+```
+
+
+```{r}
+rawData_nontnbc
+```
+
+
+Performing RMA on TNBC data.
+
+```{r}
+# res_tnbc <- rma(rawData_tnbc)
+```
+
+
+```{r}
+# saveRDS(res_tnbc, file = "res_tnbc.RDS")
+res_tnbc <- readRDS(file = "res_tnbc.RDS")
+```
+
+
+Performing RMA on nonTNBC data.
+
+```{r}
+# res_nontnbc <- rma(rawData_nontnbc)
+```
+
+
+```{r}
+# saveRDS(res_nontnbc, file = "res_nontnbc.RDS")
+res_nontnbc <- readRDS(file = "res_nontnbc.RDS")
+```
+
+
+Combining the expression matrices of TNBC and nonTNBC data after separate RMA.
+
+```{r}
+res_joint <- cbind(exprs(res_tnbc), exprs(res_nontnbc))
+```
+
+
+```{r}
+res_joint[1:5, 1:5]
+```
+
+# Saving certain CSV files for everyone else to refer to
+
+Saving the joint expression matrix from class-specific QN.
+
+```{r}
+res_joint %>% 
+  as_tibble(rownames = "probe_id") %>% 
+  write_csv("dataframe_files/post_classQN_expression.csv")
+```
+
+Saving a subset of the metadata that I think is relevant.
+
+```{r}
+mdata_subset %>% 
+  write_csv("dataframe_files/metadata_subset.csv")
+```
+
+
+Saving the TNBC and nonTNBC metadata separately, just in case.
+
+```{r}
+mdata_subset_tnbc %>% 
+  write_csv("dataframe_files/metadata_subset_tnbc.csv")
+```
+
+
+```{r}
+mdata_subset_nontnbc %>% 
+  write_csv("dataframe_files/metadata_subset_nontnbc.csv")
+```
+
+
+# Getting sample-specific boxplots
+
+## Sample specific boxplots for regular RMA QN
+
+
+```{r}
+res_1_df_long <- res_1 %>%
+  exprs() %>% 
+  as_tibble(rownames = "probeID") %>% 
+  pivot_longer(cols = all_of(c(tnbc_samples, nontnbc_samples)), names_to = "sample_id", 
+               values_to = "intensity") %>% 
+  left_join(., mdata_subset, by = c("sample_id" = "geo_accession"))
+```
+
+
+```{r}
+# saveRDS(object = res_1_df_long, "res_1_df_long.RDS")
+res_1_df_long <- readRDS("res_1_df_long.RDS")
+```
+
+
+```{r}
+p2 <- res_1_df_long %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
+                             color = set)) +
+  labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for whole QN", 60)) +
+  scale_color_npg() +
+  theme(axis.text.x = element_blank())
+
+p2
+  
+```
+
+
+```{r}
+ggsave("plots/exploration_plots/GSE76275_post_regQN_boxplots.png", 
+       p2, 
+       units = "cm", width = 30, height = 10)
+```
+
+
+```{r}
+rm(res_1_df_long)
+```
+
+
+## Sample specific boxplots for classQN
+
+```{r}
+res_joint_df_long <- res_joint %>% 
+  as_tibble(rownames = "probeID") %>% 
+  pivot_longer(cols = all_of(c(tnbc_samples, nontnbc_samples)), names_to = "sample_id", 
+               values_to = "intensity")
+  
+```
+
+
+```{r}
+# saveRDS(object = res_joint_df_long, "res_joint_df_long.RDS")
+res_joint_df_long <- readRDS("res_joint_df_long.RDS")
+```
+
+
+
+```{r}
+p1 <- res_joint_df_long %>% 
+  left_join(., mdata_subset, by = c("sample_id" = "geo_accession")) %>% 
+  mutate(sample_id = factor(sample_id)) %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
+                             color = set)) +
+  labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for  classQN", 60)) +
+  scale_color_npg() +
+  theme(axis.text.x = element_blank())
+
+p1 
+```
+
+
+```{r}
+ggsave("plots/exploration_plots/GSE76275_post_classQN_boxplots.png", 
+       p1, 
+       units = "cm", width = 30, height = 10)
+```
+
+
+# Performing PCA
+
+## Custom functions
+
+Function to create an annotated data frame by combining PC scores as well as metadata: useful for ggplot visualization.
+
+```{r}
+get_pca_annot_df <- function(pca.obj, sample_id_col, mdata_df){
+  ind_scores <- pca.obj$x
+  ind_scores_reordered <- ind_scores[match(rownames(ind_scores), mdata_df[[sample_id_col]]), ] %>% 
+    as_tibble(rownames = sample_id_col) %>% 
+    mutate(filename = factor(!!sym(sample_id_col)))
+  ind_scores_annot <- left_join(ind_scores_reordered, y = mdata_df, by = sample_id_col) %>% 
+  select(all_of(colnames(mdata_subset)), contains("PC"))
+  return(ind_scores_annot)
+}
+```
+
+
+## Performing PCA on regular RMA data
+
+```{r}
+pca.res_1 <- res_1 %>% 
+  exprs() %>% 
+  t() %>% 
+  prcomp(center = TRUE, scale = TRUE)
+```
+
+
+```{r}
+# saveRDS(pca.res_1, "pca_res1.RDS")
+pca.res_1 <- readRDS("pca_res1.RDS")
+```
+
+
+Getting the annotated data frame for the PCA.
+
+```{r}
+pca.res_1.annot_df <- get_pca_annot_df(pca.obj = pca.res_1, sample_id_col = "geo_accession", mdata_df= mdata_subset)
+head(pca.res_1.annot_df)
+```
+
+### Visualizing PCA results
+
+Looking at the variance explained by the first 10 PCs.
+
+```{r}
+fviz_eig(pca.res_1) +
+  labs(x = "Principal Component", 
+       title = str_wrap("Scree plot for the first 10 principal components for regular RMA-normalized data", 60)) +
+  theme(title = element_text(size = 15))
+```
+
+Superimposing variables in data upon sample PCA scores.
+The PCA does not seem to separate the TNBC and nonTNBC samples that well when regular RMA is performed.
+
+```{r}
+ggplot(pca.res_1.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = triple_negative_status)) +
+    ggtitle("Samples in first two PCs, \ncoloured by triple_negative_status for whole QN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+
+
+ggsave("plots/exploration_plots/PCA_wholeQN_TNBC_status.png")
+  
+```
+
+
+
+The samples do not seem to separate well by set either.
+
+```{r}
+ggplot(pca.res_1.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
+    ggtitle("Samples in first two PCs, \ncoloured by set (discovery or validation) for whole QN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_wholeQN_set.png")
+```
+
+There does not seem to be too strong of a batch effect according to submission date.
+
+```{r}
+ggplot(pca.res_1.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = submission_date)) +
+    ggtitle("Samples in first two PCs, \ncoloured by submission date for whole QN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_wholeQN_set.png")
+```
+
+
+```{r}
+ggplot(pca.res_1.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = tnbc_subtype)) +
+    ggtitle("Samples in first two PCs, \ncoloured by tnbc_subtype for whole QN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5), legend.position = "right", legend.direction = "vertical", legend.key.width = unit(x = 0.5, units = "cm")) 
+```
+
+## Performing PCA on separately-performed RMA data
+
+
+```{r}
+pca.res_joint <- res_joint %>% 
+  t() %>% 
+  prcomp(center = TRUE, scale = TRUE)
+```
+
+
+```{r}
+# saveRDS(pca.res_joint, "pca_res_joint.RDS")
+pca.res_joint <- readRDS("pca_res_joint.RDS")
+```
+
+
+Getting the annotated data frame for the PCA.
+
+```{r}
+pca.res_joint.annot_df <- get_pca_annot_df(pca.obj = pca.res_joint, sample_id_col = "geo_accession", mdata_df= mdata_subset)
+head(pca.res_joint.annot_df)
+```
+
+### Visualizing PCA results
+
+Looking at the variance explained by the first 10 PCs.
+
+```{r}
+fviz_eig(pca.res_joint) +
+  labs(x = "Principal Component", 
+       title = str_wrap("Scree plot for the first 10 principal components for classQN-normalized data", 60)) +
+  theme(title = element_text(size = 15))
+```
+
+Superimposing variables in data upon sample PCA scores.
+The PCA **does** separate the TNBC and nonTNBC samples well when class-specific RMA is performed.
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = triple_negative_status)) +
+    ggtitle("Samples in first two PCs, \ncoloured by triple_negative_status for classQN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+  
+```
+The validation nonTNBC samples are separated from the discovery TNBC and validation TNBC samples.
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
+    ggtitle("Samples in first two PCs, \ncoloured by set (discovery or validation) for classQN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+```
+
+Submission date is perfectly confounded with TNBC status. May or may not be batch effects.
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = submission_date)) +
+    ggtitle("Samples in first two PCs, \ncoloured by submission date) for classQN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+```
+
+
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2, colour = tnbc_subtype)) +
+    ggtitle("Samples in first two PCs, \ncoloured by tnbc_subtype for classQN") +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5), legend.position = "right", legend.direction = "vertical", legend.key.width = unit(x = 0.5, units = "cm")) 
+```
+
+
+
+# Performing hierarchical clustering
+
+## Getting distances
+
+```{r}
+perform_min_max <- function(x){
+  mm_transformation <- preProcess(x, method = "range")
+  rescaled <- predict(mm_transformation, x)
+  return(rescaled)
+}
+```
+
+
+Getting distances after performing min max normalization.
+
+
+```{r}
+# res_1_dists <- exprs(res_1) %>% 
+#   t() %>% 
+#   perform_min_max() %>% 
+#   dist(method = "euclidean")
+  
+```
+
+
+```{r}
+# saveRDS(res_1_dists, "res_1_dists.RDS")
+res_1_dists <- readRDS("res_1_dists.RDS")
+```
+
+
+
+```{r}
+# res_joint_dists <- res_joint %>% 
+#     t() %>% 
+#   perform_min_max() %>% 
+#   dist(method = "euclidean")
+  
+```
+
+
+```{r}
+# saveRDS(res_joint_dists, "res_joint_dists.RDS")
+res_joint_dists <- readRDS("res_joint_dists.RDS")
+```
+
+
+
+## Using dendrograms
+
+```{r}
+res_1_dend <- res_1_dists %>% 
+  hclust() %>% 
+  as.dendrogram()
+```
+
+
+```{r}
+res_joint_dend <- res_joint_dists %>%
+  hclust() %>% 
+  as.dendrogram()
+```
+
+ 
+```{r}
+library(dendextend)
+```
+
+
+```{r}
+# res_1_dend %>% 
+#   labels()
+```
+
+
+```{r}
+# res_1_dend %>% 
+#   order.dendrogram()
+```
+
+```{r}
+# (res_1 %>% 
+#   exprs() %>% 
+#   colnames())[28]
+  
+```
+
+
+```{r}
+res_1_dend_laborder <- res_1_dend %>% 
+  labels()
+
+```
+
+
+```{r}
+mycolors <- ifelse(mdata_subset[res_1_dend_laborder, ]$triple_negative_status == "TN", "forestgreen", "maroon")
+```
+
+
+
+```{r}
+par(mar = c(10,2,1,1))
+res_1_dend %>% 
+  set("labels_cex", 0.1) %>% 
+  plot()
+
+colored_bars(colors = mycolors, dend = res_1_dend, rowLabels = "TN Status", add = TRUE)
+```
+
+
+```{r}
+res_joint_dend_laborder <- res_joint_dend %>% 
+  labels()
+```
+
+
+```{r}
+mycolors <- ifelse(mdata_subset[res_joint_dend_laborder, ]$triple_negative_status == "TN", "forestgreen", "maroon")
+```
+
+
+
+```{r}
+par(mar = c(10,2,1,1))
+res_joint_dend %>% 
+  set("labels_cex", 0.1) %>% 
+  plot()
+
+colored_bars(colors = mycolors, dend = res_joint_dend, rowLabels = "TN Status", add = TRUE)
+```
+
+
+## Using heatmaps
+
+Function to process distance object into a distance matrix for heatmap visualization.
+
+```{r}
+get_distmat <- function(x){
+  distmat <- as.matrix(x)
+  colnames(distmat) <- NULL
+  diag(distmat) <- NA
+  return(distmat)
+}
+```
+
+
+
+```{r}
+row_annot <- mdata_subset %>% 
+  select(set, submission_date, tnbc_subtype)
+
+head(row_annot)
+```
+
+
+```{r}
+set.seed(1)
+row_colours <- list( "set" = c("steelblue", "maroon", "gold"), 
+                     "submission_date" = sample(colorRampPalette(colors = brewer.pal(n = 8, name = "Set2"))(8), 2),
+                     "tnbc_subtype" = sample(colorRampPalette(colors = brewer.pal(n = 8, name = "Dark2"))(8), 5)
+                     )
+
+names(row_colours$set) <- as.character(unique(mdata_subset$set))
+names(row_colours$submission_date) <- as.character(unique(mdata_subset$submission_date))
+names(row_colours$tnbc_subtype) <- as.character(unique(mdata_subset$tnbc_subtype))
+str(row_colours)
+```
+
+
+```{r}
+res_1_dists %>% 
+  get_distmat() %>% 
+pheatmap(.,
+         annotation_row = row_annot, 
+         annotation_colors = row_colours,
+         show_colnames = F,
+         show_rownames = F,
+         cutree_rows = 3,
+         main = str_wrap("Heatmap of sample distances for whole QN expression matrix", 60),
+         legend_labels = c("small distance", "large distance"),
+         legend_breaks = c(min(., na.rm = TRUE), 
+                         max(., na.rm = TRUE)))
+```
+
+
+```{r}
+res_joint_dists %>% 
+  get_distmat() %>% 
+pheatmap(.,
+         annotation_row = row_annot, 
+         annotation_colors = row_colours,
+         show_colnames = F,
+         show_rownames = F,
+         cutree_rows = 2,
+         cutree_cols = 2,
+         main = str_wrap("Heatmap of sample distances for class-specific QN expression matrix", 60),
+         legend_labels = c("small distance", "large distance"),
+         legend_breaks = c(min(., na.rm = TRUE), 
+                         max(., na.rm = TRUE)))
+```
+
+
+# Performing SVA
+
+## Performing SVA on regular RMA data
+
+
+```{r}
+full_mod <- mdata_subset %>% 
+  select(geo_accession, triple_negative_status) %>% 
+  arrange(triple_negative_status) %>% 
+  model.matrix(~triple_negative_status, data = .)
+
+head(full_mod)
+```
+
+
+```{r}
+red_mod <- model.matrix(~1, data = mdata_subset)
+
+head(red_mod)
+```
+
+Get number of significant surrogate variables.
+
+```{r}
+n.sv.wholeQN <- num.sv(exprs(res_1), full_mod, method="leek")
+```
+
+
+```{r}
+n.sv.wholeQN
+```
+
+
+```{r}
+svobj.wholeQN <- sva(exprs(res_1), mod = full_mod, mod0 = red_mod, n.sv = 1)
+```
+
+
+```{r}
+sv_df.wholeQN <- tibble("geo_accession" = colnames(exprs(res_1)), "sv" = svobj.wholeQN$sv)
+
+head(sv_df.wholeQN)
+```
+
+
+
+```{r}
+left_join(sv_df.wholeQN, mdata, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
+  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
+  theme_light() +
+  labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
+  
+
+# ggsave("plots/exploration_plots/sva_grouping_normalRMA.png")
+```
+
+
+## Performing SVA on class-specific quantile normalized data
+
+Create full model matrix.
+
+```{r}
+full_mod <- mdata_subset %>% 
+  select(geo_accession, triple_negative_status) %>% 
+  arrange(triple_negative_status) %>% 
+  model.matrix(~triple_negative_status, data = .)
+
+head(full_mod)
+```
+
+Create reduced model matrix.
+
+```{r}
+red_mod <- model.matrix(~1, data = mdata_subset)
+
+head(red_mod)
+```
+
+Get number of significant surrogate variables.
+
+```{r}
+n.sv.classQN <- num.sv(res_joint, full_mod, method="leek")
+```
+
+
+```{r}
+n.sv.classQN
+```
+
+
+Perform SVA on classQN-normalized expression matrix.
+
+
+```{r}
+svobj.classQN <- sva(res_joint, mod = full_mod, mod0 = red_mod, n.sv = n.sv.classQN)
+```
+
+
+```{r}
+sv_df.classQN <- tibble("geo_accession" = colnames(res_joint), "sv" = svobj.classQN$sv)
+
+head(sv_df.classQN)
+```
+
+```{r}
+saveRDS(sv_df.classQN, "sv_df_classQN.RDS")
+# sv_df.classQN <- readRDS("sv_df_classQN.RDS")
+```
+
+
+```{r}
+left_join(sv_df.classQN , mdata, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
+  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
+  theme_light() +
+  labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
+  
+
+ggsave("plots/exploration_plots/sva_grouping_classQN.png")
+```
+
+
+# Trying to see if the SVA estimates a batch when QN is not applied
+
+In this attempt, I perform no quantile normalization while performing RMA. If QN has not been performed and a surrogate variable shows up that corresponds to batch, batch effects are probably present.
+
+```{r}
+rawData.summary <- rma(rawData, background = TRUE, normalize = FALSE)
+```
+
+
+```{r}
+rawData.summary_df_long <- rawData.summary %>% 
+  exprs() %>% 
+  as_tibble(rownames = "probeID") %>% 
+  pivot_longer(cols = all_of(c(tnbc_samples, nontnbc_samples)), names_to = "sample_id", 
+               values_to = "intensity") %>% 
+  left_join(., mdata_subset, by = c("sample_id" = "geo_accession"))
+```
+
+
+
+```{r}
+p3 <- rawData.summary_df_long %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
+                             color = set)) +
+  labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots in the absence of QN", 60)) +
+  scale_color_npg() +
+  theme(axis.text.x = element_blank())
+
+p3
+```
+
+
+```{r}
+ggsave("plots/exploration_plots/GSE76275_noQN_boxplots.png", 
+       p1, 
+       units = "cm", width = 30, height = 10)
+```
+
+Getting the number of surrogate variables in the absence of quantile normalization.
+
+```{r}
+n.sv.nonorm <- num.sv(exprs(rawData.summary), full_mod, method="leek")
+```
+
+There is one surrogate variable present in the absence of QN.
+
+```{r}
+n.sv.nonorm
+```
+
+
+```{r}
+svobj.nonorm <- sva(exprs(rawData.summary), mod = full_mod, mod0 = red_mod, n.sv = n.sv.nonorm)
+```
+
+
+```{r}
+sv_df.nonorm <- tibble("geo_accession" = colnames(exprs(rawData.summary)), "sv" = svobj.nonorm$sv)
+
+head(sv_df.nonorm)
+```
+
+
+```{r}
+left_join(sv_df.nonorm, mdata, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
+  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
+  theme_light() +
+  labs(y = "Surrogate Variable Value", 
+       title = str_wrap("Distribution of latent variable estimated by SVA for different grouping factors", 60))
+
+ggsave("plots/exploration_plots/sva_grouping_noQN.png")
+```
+
+
