@@ -20,4 +20,5 @@ Access My Data Exploration folder as link below:
 https://drive.google.com/drive/folders/1WYI_c0blbKwc2hm7HpbvHWAIr-FmCNsj?usp=sharing
 
 
+Samantha's exploration at [this link](https://rpubs.com/kjmkjm/950292).
 
