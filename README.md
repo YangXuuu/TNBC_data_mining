@@ -6,8 +6,11 @@ Access initial training dataset (GSE76275) here:
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE76275
 
 
-Access google document for report written here:
+Access google document for BS6202 report written here:
 https://docs.google.com/document/d/14Gx5Y5L-zLhKzvk7nKMmK_6VVJmR1U8YjBbvx6nfLbg/edit
+
+Access google document for BS6203 report written here:
+https://docs.google.com/document/d/1RH9IbL075sInZO1FrJQiHTrVeBeUzOaE2zhC1-BkvHY/edit?usp=sharing
 
 Access Project Graphics and Visualisation as link below:
 https://docs.google.com/presentation/d/1zTOPwLg0JIpAcK6bNqeAIIh-f0MTXFj3/edit?usp=sharing&ouid=107696356622137707102&rtpof=true&sd=true
