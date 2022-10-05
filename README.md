@@ -2,15 +2,13 @@
 ### BS6202 & BS6203 ###
 
 
-Training dataset (GSE76275)  [this link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE76275)
+Training dataset (GSE76275) at [this link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE76275)
 
-Independent dataset (GSE43358)  [this link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE43358)
+Independent dataset (GSE43358) at [this link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE43358)
 
-Access google document for BS6202 report written here:
-https://docs.google.com/document/d/14Gx5Y5L-zLhKzvk7nKMmK_6VVJmR1U8YjBbvx6nfLbg/edit
+Access google document for BS6202 report at [this link](https://docs.google.com/document/d/14Gx5Y5L-zLhKzvk7nKMmK_6VVJmR1U8YjBbvx6nfLbg/edit)
 
-Access google document for BS6203 report written here:
-https://docs.google.com/document/d/1RH9IbL075sInZO1FrJQiHTrVeBeUzOaE2zhC1-BkvHY/edit?usp=sharing
+Access google document for BS6203 report at [this link](https://docs.google.com/document/d/1RH9IbL075sInZO1FrJQiHTrVeBeUzOaE2zhC1-BkvHY/edit?usp=sharing)
 
 Project Graphics and Visualisation Presentation Slide at [this link](https://docs.google.com/presentation/d/1NPtJ5HFdRHuLHTeOj2lNmTtQgsCbcLwP/edit?usp=sharing&ouid=107696356622137707102&rtpof=true&sd=true)
 
