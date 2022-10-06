@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+# Given a vector and the theta 1 and theta 2 values, return a vector with the fuzzy score
+fuzzy_score_ranks <- function(x, theta_1, theta_2){
+  ranked_x <- rank(desc(x))
+  q1 <- quantile(ranked_x, theta_1)
+  q2 <- quantile(ranked_x, theta_2)
+
+  q_diff <- q1 - q2
+  scored <- map_dbl(ranked_x, ~{
+    # print(str_glue("Current number: {.x}"))
+    if(.x < q1){
+      # print(str_glue("Less than q1 ({q1}): {.x}"))
+      # print(str_glue("Returned: 1"))
+      return(1)
+    } else if(.x > q1 && .x <= q2){
+      # print(str_glue("Between q1 ({q1}) and q2 ({q2}): {.x}"))
+      fuzzy_score <- (.x - q2)/q_diff
+      # print(str_glue("Returned: {fuzzy_score}"))
+      return(fuzzy_score)
+    } else {
+      # print(str_glue("Returned: 0"))
+      return(0)
+    }
+  })
+  return(scored)
+}
+```
+
+
+Create a test matrix.
+
+```{r}
+emat <- replicate(n = 10, expr = sample(c(100:110), 10, replace = FALSE), simplify = TRUE)
+emat
+```
+Annotate the test matrix.
+
+```{r}
+sample_ids <- paste("sample", 1:10, sep = "_")
+colnames(emat) <- sample_ids
+rownames(emat) <- letters[1:10]
+emat
+```
+
+
+
+```{r}
+# given a matrix and theta 1 and theta 2, return a fuzzy-scored matrix
+## Uses the fuzzy_score_ranks function defined above on every column vector of the matrix
+perform_gfs <- function(emat, theta_1, theta_2){
+  sample_ids <- colnames(emat)
+  probe_ids <- rownames(emat)
+  # iterating over the columns of the matrix to return a list of vectors
+  scored_list <- map(1:ncol(emat), .f = ~{
+    col_values <- emat[, .x]
+    ranked_col <- rank(col_values)
+    scored_column <- fuzzy_score_ranks(ranked_col, theta_1, theta_2)
+    return(scored_column)
+  }, emat = emat)
+  # column bind the list of vectors to create a matrix
+  scored_mat <- do.call(cbind, scored_list)
+  # return the annotation to the new fuzzy-scored matrix
+  colnames(scored_mat) <- sample_ids
+  rownames(scored_mat) <- probe_ids
+  return(scored_mat)
+}
+```
+
+
+```{r}
+perform_gfs(emat, 0.10, 0.20)
+```
+
+```{r}
+emat
+```
+
