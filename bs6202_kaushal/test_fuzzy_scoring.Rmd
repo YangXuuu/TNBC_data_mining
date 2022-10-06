@@ -17,18 +17,12 @@ fuzzy_score_ranks <- function(x, theta_1, theta_2){
 
   q_diff <- q1 - q2
   scored <- map_dbl(ranked_x, ~{
-    # print(str_glue("Current number: {.x}"))
     if(.x < q1){
-      # print(str_glue("Less than q1 ({q1}): {.x}"))
-      # print(str_glue("Returned: 1"))
       return(1)
     } else if(.x > q1 && .x <= q2){
-      # print(str_glue("Between q1 ({q1}) and q2 ({q2}): {.x}"))
       fuzzy_score <- (.x - q2)/q_diff
-      # print(str_glue("Returned: {fuzzy_score}"))
       return(fuzzy_score)
     } else {
-      # print(str_glue("Returned: 0"))
       return(0)
     }
   })
