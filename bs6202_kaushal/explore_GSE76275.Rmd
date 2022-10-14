@@ -12,8 +12,6 @@ output:
 ```{r}
 library(GEOquery)
 library(oligo)
-# library(affy)
-library(limma)
 library(sva)
 library(tidyverse)
 library(ggsci)
@@ -22,7 +20,9 @@ library(pheatmap)
 library(dendextend)
 library(caret)
 library(RColorBrewer)
-# library(viridis)
+library(viridis)
+library(UpSetR)
+library(ComplexUpset)
 ```
 
 
@@ -126,23 +126,15 @@ rm(cnames, cnames_processed)
 glimpse(mdata)
 ```
 
-
 ```{r}
-# mdata %>% 
-  # distinct(triple_negative_status, tnbc_subtype)
-  # distinct(submission_date, triple_negative_status)
-  # distinct(tnbc_subtype, triple_negative_status)
-  # distinct(histology, histology_group)
-  # distinct(er, her2, pr, triple_negative_status)
+mdata <- mdata %>% 
+  mutate(her2 = if_else(!is.na(her2), her2, "Not Available")) %>% 
+  mutate(er = factor(er, levels = c("Negative", "Positive")), 
+         pr = factor(pr, levels = c("Negative", "Positive")), 
+         her2 = factor(her2, levels = c("Negative", "Positive", "Not Available"))) %>% 
+  select(geo_accession, everything())
+head(mdata) 
 ```
-
-Looking at the number of samples for each combination of set and each condition.
-
-```{r}
-mdata %>% 
-  count(triple_negative_status, set)
-```
-
 
 # Reading in raw probe intensity data
 
@@ -166,10 +158,7 @@ names(celFiles) <- celFiles %>%
 head(celFiles)
 ```
 
-
-```{r}
-head(mdata)
-```
+Rearranging rows of metadata to match order of samples in `celFiles`.
 
 ```{r}
 mdata <- mdata[match(mdata$geo_accession, names(celFiles)), ]
@@ -206,7 +195,7 @@ head(mdata_subset)
 ```
 
 ```{r}
-# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
 ```
 
 
@@ -221,8 +210,162 @@ Looking at the dimensions of the raw expression matrix.
 exprs(rawData) %>% dim()
 ```
 
+# Plotting some metadata attributes
 
-## Using regular rma on data (without separating by class)
+Looking at the number of samples for triple negative status and for set.
+
+```{r}
+mdata_subset %>% 
+  count(triple_negative_status, set)
+```
+
+
+
+```{r}
+mdata_subset %>% 
+  count(triple_negative_status) %>% 
+  mutate(proportion = round(n/sum(n), 3)) %>% 
+  ggplot() +
+  geom_col(mapping = aes(y = "dummy_group",
+                         x = proportion,
+                         fill = triple_negative_status)) +
+    theme(axis.text.x = element_text(angle = 90, size = 7),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank(),
+          title = element_text(size = 10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.5),
+          legend.direction = "horizontal", legend.position = "top") +
+  geom_text(aes(y = 1, 
+                x = proportion, 
+                label = proportion, 
+                group = triple_negative_status), 
+            size = 5, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+  scale_fill_npg(name = "Triple Negative Status") +
+  labs(x = "Proportion",
+       title = str_wrap("Proportions of TNBC status values for GSE76275", 60))
+
+ggsave(filename = "plots/exploration_plots/GSE76275_tnbc_proportion_barplot.png")
+```
+
+```{r}
+mdata_subset %>% 
+  count(triple_negative_status, pr) %>% 
+  mutate(proportion = round(n/sum(n), 3)) %>% 
+  ggplot() +
+  geom_col(mapping = aes(x = pr,
+                         y = proportion,
+                         fill = triple_negative_status)) +
+    geom_text(aes(x = pr, 
+                y = proportion, 
+                label = proportion, 
+                group = triple_negative_status), 
+            size = 3, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+    theme(title = element_text(size = 10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.5),
+          legend.direction = "vertical", legend.position = "right") +
+  scale_fill_npg(name = "Triple Negative Status") +
+  labs(x = "Progesterone Receptor Status",
+       y = "Proportion",
+       title = str_wrap("Proportions of progesterone receptor status values for GSE76275", 60))
+
+ggsave(filename = "plots/exploration_plots/GSE76275_pr_proportion_barplot.png")
+```
+
+
+```{r}
+mdata_subset %>% 
+  count(triple_negative_status, er) %>% 
+  mutate(proportion = round(n/sum(n), 3)) %>% 
+  ggplot() +
+  geom_col(mapping = aes(x = er,
+                         y = proportion,
+                         fill = triple_negative_status)) +
+      geom_text(aes(x = er, 
+                y = proportion, 
+                label = proportion, 
+                group = triple_negative_status), 
+            size = 3, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+    theme(title = element_text(size = 10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.5),
+          legend.direction = "vertical", legend.position = "right") +
+  scale_fill_npg(name = "Triple Negative Status") +
+  labs(x = "Estrogen Receptor Status",
+       y = "Proportion",
+       title = str_wrap("Proportions of estrogen receptor status values for GSE76275", 60))
+
+ggsave(filename = "plots/exploration_plots/GSE76275_er_proportion_barplot.png")
+```
+
+```{r}
+mdata_subset %>% 
+  count(triple_negative_status, her2) %>% 
+  mutate(proportion = round(n/sum(n), 3)) %>% 
+  ggplot() +
+  geom_col(mapping = aes(x = her2,
+                         y = proportion,
+                         fill = triple_negative_status)) +
+    geom_text(aes(x = her2, 
+                y = proportion, 
+                label = proportion, 
+                group = triple_negative_status), 
+            size = 3, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+    theme(title = element_text(size = 10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.5),
+          legend.direction = "vertical", legend.position = "right") +
+  scale_fill_npg(name = "Triple Negative Status") +
+  labs(x = "HER2 Amplification Status",
+       y = "Proportion",
+       title = str_wrap("Proportions of HER2 amplification status values for GSE76275", 60))
+
+ggsave(filename = "plots/exploration_plots/GSE76275_her2_proportion_barplot.png")
+```
+
+
+
+```{r}
+list("ER" = mdata_subset$geo_accession[mdata_subset$er == "Positive"],
+     "PR" = mdata_subset$geo_accession[mdata_subset$pr == "Positive"],
+     "HER2" = mdata_subset$geo_accession[mdata_subset$her2 == "Positive"]) %>%
+  fromList(.) %>% 
+  upset(., c("ER", "PR", "HER2"), width_ratio = 0.2) +
+  ggtitle(str_wrap("Upset plot for different combinations of ER, PR, and HER2 status in the non-TNBC samples in GSE76275", 60)) +
+  theme(title = element_text(size = 7))
+
+# ggsave("plots/exploration_plots/GSE76275_nonTNBC_upset.png")
+```
+
+Reordering the columns in the metadata.
+
+```{r}
+mdata <- select(mdata, geo_accession, everything())
+head(mdata)
+```
+
+
+# Performing RMA
+
+## Using regular RMA on data (without separating by class)
 
 ```{r}
 # res_1 <- rma(rawData)
@@ -415,13 +558,20 @@ res_1_df_long <- readRDS("res_1_df_long.RDS")
 ```{r}
 p2 <- res_1_df_long %>% 
   ggplot() +
-  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
-                             color = set)) +
-  labs(x = "samples", 
-       title = str_wrap("Sample-wise log2 intensity boxplots for whole QN", 60)) +
-  scale_color_npg() +
-  theme(axis.text.x = element_blank())
+  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, color = set), outlier.size = 0.2)
+```
 
+
+```{r}
+p2 <- p2 + labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for global quantile normalization for GSE76275", 60)) +
+  scale_color_npg(name = "Triple Negative Status") +
+  theme_light() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        title = element_text(size = 10),
+        legend.position = "top", 
+        legend.direction = "horizontal")
 p2
   
 ```
@@ -430,7 +580,9 @@ p2
 ```{r}
 ggsave("plots/exploration_plots/GSE76275_post_regQN_boxplots.png", 
        p2, 
-       units = "cm", width = 30, height = 10)
+       units = "cm", 
+       width = 30, 
+       height = 10)
 ```
 
 
@@ -440,6 +592,7 @@ rm(res_1_df_long)
 
 
 ## Sample specific boxplots for classQN
+
 
 ```{r}
 res_joint_df_long <- res_joint %>% 
@@ -462,21 +615,50 @@ p1 <- res_joint_df_long %>%
   left_join(., mdata_subset, by = c("sample_id" = "geo_accession")) %>% 
   mutate(sample_id = factor(sample_id)) %>% 
   ggplot() +
-  geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
-                             color = set)) +
-  labs(x = "samples", 
-       title = str_wrap("Sample-wise log2 intensity boxplots for  classQN", 60)) +
-  scale_color_npg() +
-  theme(axis.text.x = element_blank())
+   geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, color = set), outlier.size = 0.2)
+```
+
+
+```{r}
+p1 <- p1 + labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for class-specific quantile normalization for GSE76275", 60)) +
+scale_color_npg(name = "Triple Negative Status") +
+  theme_light() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        title = element_text(size = 10),
+        legend.position = "top", 
+        legend.direction = "horizontal")
 
 p1 
 ```
 
 
+
 ```{r}
 ggsave("plots/exploration_plots/GSE76275_post_classQN_boxplots.png", 
        p1, 
-       units = "cm", width = 30, height = 10)
+       units = "cm", width = 20, height = 10)
+```
+
+
+```{r}
+res_joint_df_long %>% 
+  left_join(., mdata_subset, by = c("sample_id" = "geo_accession")) %>% 
+  mutate(sample_id = factor(sample_id)) %>% 
+  ggplot() +
+   geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, fill = set), outlier.size = 0.2) +
+labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for class-specific quantile normalization for GSE76275", 60)) +
+scale_fill_npg(name = "Triple Negative Status") +
+  theme_light() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        title = element_text(size = 10),
+        legend.position = "right", 
+        legend.direction = "vertical")
+
+ggsave("plots/exploration_plots/GSE76275_post_classQN_boxplots_bad.png", units = "cm", width = 20, height = 10)
 ```
 
 
@@ -502,10 +684,10 @@ get_pca_annot_df <- function(pca.obj, sample_id_col, mdata_df){
 ## Performing PCA on regular RMA data
 
 ```{r}
-pca.res_1 <- res_1 %>% 
-  exprs() %>% 
-  t() %>% 
-  prcomp(center = TRUE, scale = TRUE)
+# pca.res_1 <- res_1 %>% 
+#   exprs() %>% 
+#   t() %>% 
+#   prcomp(center = TRUE, scale = TRUE)
 ```
 
 
@@ -529,8 +711,14 @@ Looking at the variance explained by the first 10 PCs.
 ```{r}
 fviz_eig(pca.res_1) +
   labs(x = "Principal Component", 
-       title = str_wrap("Scree plot for the first 10 principal components for regular RMA-normalized data", 60)) +
-  theme(title = element_text(size = 15))
+       title = str_wrap("Scree plot for the first 10 principal components for global RMA-normalized data for GSE76275", 60)) +
+    theme(title = element_text(size = 10), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_wholeQN_scree.png", bg = "white")
 ```
 
 Superimposing variables in data upon sample PCA scores.
@@ -539,17 +727,19 @@ The PCA does not seem to separate the TNBC and nonTNBC samples that well when re
 ```{r}
 ggplot(pca.res_1.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = triple_negative_status)) +
-    ggtitle("Samples in first two PCs, \ncoloured by triple_negative_status for whole QN") +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by triple negative status for GSE76275 after global quantile normalization", 60)) +
+  scale_color_npg(name = "Triple Negative Status") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5))
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.background = )
 
 
-ggsave("plots/exploration_plots/PCA_wholeQN_TNBC_status.png")
+ggsave("plots/exploration_plots/PCA_wholeQN_TNBC_status.png", bg = "white")
   
 ```
 
@@ -560,7 +750,8 @@ The samples do not seem to separate well by set either.
 ```{r}
 ggplot(pca.res_1.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
-    ggtitle("Samples in first two PCs, \ncoloured by set (discovery or validation) for whole QN") +
+  ggtitle(str_wrap("Samples in first two PCs, coloured by set (discovery or validation) for GSE76275 after global quantile normalization", 60)) +
+  scale_color_aaas(name = "Triple Negative Status") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
@@ -569,7 +760,7 @@ ggplot(pca.res_1.annot_df) +
         panel.background = element_blank(),
         axis.line = element_line(colour = "black", size = 0.5))
 
-ggsave("plots/exploration_plots/PCA_wholeQN_set.png")
+ggsave("plots/exploration_plots/PCA_wholeQN_set.png", bg = "white")
 ```
 
 There does not seem to be too strong of a batch effect according to submission date.
@@ -605,7 +796,6 @@ ggplot(pca.res_1.annot_df) +
 
 ## Performing PCA on separately-performed RMA data
 
-
 ```{r}
 pca.res_joint <- res_joint %>% 
   t() %>% 
@@ -633,8 +823,14 @@ Looking at the variance explained by the first 10 PCs.
 ```{r}
 fviz_eig(pca.res_joint) +
   labs(x = "Principal Component", 
-       title = str_wrap("Scree plot for the first 10 principal components for classQN-normalized data", 60)) +
-  theme(title = element_text(size = 15))
+       title = str_wrap("Scree plot for the first 10 principal components for class-specific RMA-normalized data for GSE76275", 60)) +
+    theme(title = element_text(size = 10), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_classQN_scree.png")
 ```
 
 Superimposing variables in data upon sample PCA scores.
@@ -643,7 +839,8 @@ The PCA **does** separate the TNBC and nonTNBC samples well when class-specific 
 ```{r}
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = triple_negative_status)) +
-    ggtitle("Samples in first two PCs, \ncoloured by triple_negative_status for classQN") +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by triple negative status for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_npg(name = "Triple Negative Status") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
@@ -651,21 +848,25 @@ ggplot(pca.res_joint.annot_df) +
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black", size = 0.5))
-  
+
+ggsave("plots/exploration_plots/PCA_classQN_TNBC_status.png")
 ```
 The validation nonTNBC samples are separated from the discovery TNBC and validation TNBC samples.
 
 ```{r}
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
-    ggtitle("Samples in first two PCs, \ncoloured by set (discovery or validation) for classQN") +
+  ggtitle(str_wrap("Samples in first two PCs, coloured by set (discovery or validation) for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_aaas(name = "Triple Negative Status") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
+        title = element_text(size = 10),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_classQN_TNBC_set.png")
 ```
 
 Submission date is perfectly confounded with TNBC status. May or may not be batch effects.
@@ -673,7 +874,8 @@ Submission date is perfectly confounded with TNBC status. May or may not be batc
 ```{r}
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = submission_date)) +
-    ggtitle("Samples in first two PCs, \ncoloured by submission date) for classQN") +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by submission date for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_npg(name = "Triple Negative Status") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
@@ -681,6 +883,8 @@ ggplot(pca.res_joint.annot_df) +
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black", size = 0.5))
+
+ggsave("plots/exploration_plots/PCA_classQN_TNBC_date.png")
 ```
 
 
@@ -871,7 +1075,7 @@ str(row_colours)
 
 
 ```{r}
-res_1_dists %>% 
+ph1 <- res_1_dists %>% 
   get_distmat() %>% 
 pheatmap(.,
          annotation_row = row_annot, 
@@ -1066,7 +1270,7 @@ p3
 
 ```{r}
 ggsave("plots/exploration_plots/GSE76275_noQN_boxplots.png", 
-       p1, 
+       p3, 
        units = "cm", width = 30, height = 10)
 ```
 
@@ -1108,4 +1312,8 @@ left_join(sv_df.nonorm, mdata, by = "geo_accession") %>%
 ggsave("plots/exploration_plots/sva_grouping_noQN.png")
 ```
 
+
+```{r}
+
+```
 
