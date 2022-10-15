@@ -1,0 +1,84 @@
+---
+title: "Getting POG and rrvgo"
+output: 
+  html_notebook:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r}
+library(clusterProfiler)
+library(rrvgo)
+library(tidyverse)
+library(ggsci)
+```
+
+# Get POG
+
+```{r}
+limma_dataset_1 <- read_csv("dataframe_files/limma_dataset1_topgenes.csv")
+glimpse(limma_dataset_1)
+```
+
+
+```{r}
+limma_dataset_2 <- read_csv("dataframe_files/limma_dataset2_topgenes.csv")
+glimpse(limma_dataset_2)
+```
+
+```{r}
+limma_dataset_2
+```
+
+
+```{r}
+intersect(limma_dataset_1$PROBEID, limma_dataset_2$ID) %>% length()
+```
+
+
+```{r}
+gfs_dataset_1 <- read_csv("dataframe_files/GFS_dataset1_topgenes.csv")
+glimpse(gfs_dataset_1)
+```
+
+```{r}
+gfs_dataset_2 <- read_csv("dataframe_files/GFS_dataset2_topgenes.csv")
+glimpse(gfs_dataset_2)
+```
+
+```{r}
+intersect(gfs_dataset_1$Probe, gfs_dataset_2$Probe) %>% length()
+```
+
+
+```{r}
+get_POG <- function(gene_list_1, gene_list_2, dataset_1, dataset_2){
+  list_length_1 <- length(gene_list_1)
+  list_length_2 <- length(gene_list_2)
+  k <- length(intersect(gene_list_1, gene_list_2))
+  df <- tibble("Dataset" = c(dataset_1, dataset_2),
+                   "List Size" = c(list_length_1, list_length_2),
+                   "Intersection Size" = rep(k, 2),
+                   "POG Designation" = c("POG12", "POG21"), 
+                   "Value" = c(k/list_length_1, k/list_length_2))
+  return(df)
+}
+```
+
+```{r}
+limma_pog <- get_POG(limma_dataset_1$PROBEID, limma_dataset_2$ID, "GSE76275", "GSE43358")
+limma_pog %>% 
+  write_csv("dataframe_files/limma_percentage_of_overlapping_genes.csv")
+```
+
+
+```{r}
+gfs_pog <- get_POG(gfs_dataset_1$Probe, gfs_dataset_2$Probe, "GSE76275", "GSE43358")
+
+gfs_pog
+
+gfs_pog %>% 
+  write_csv("dataframe_files/GFS_percentage_of_overlapping_genes.csv")
+```
+
