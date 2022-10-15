@@ -751,7 +751,7 @@ The samples do not seem to separate well by set either.
 ggplot(pca.res_1.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
   ggtitle(str_wrap("Samples in first two PCs, coloured by set (discovery or validation) for GSE76275 after global quantile normalization", 60)) +
-  scale_color_aaas(name = "Triple Negative Status") +
+  scale_color_aaas(name = "Sample Set") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
@@ -857,7 +857,7 @@ The validation nonTNBC samples are separated from the discovery TNBC and validat
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = set)) +
   ggtitle(str_wrap("Samples in first two PCs, coloured by set (discovery or validation) for GSE76275 after class-specific quantile normalization", 60)) +
-  scale_color_aaas(name = "Triple Negative Status") +
+  scale_color_aaas(name = "Sample Set") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
         title = element_text(size = 10),
@@ -875,7 +875,7 @@ Submission date is perfectly confounded with TNBC status. May or may not be batc
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = submission_date)) +
     ggtitle(str_wrap("Samples in first two PCs, coloured by submission date for GSE76275 after class-specific quantile normalization", 60)) +
-  scale_color_npg(name = "Triple Negative Status") +
+  scale_color_npg(name = "Submission Date") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
@@ -892,17 +892,92 @@ ggsave("plots/exploration_plots/PCA_classQN_TNBC_date.png")
 ```{r}
 ggplot(pca.res_joint.annot_df) + 
   geom_point(mapping = aes(x = PC1, y = PC2, colour = tnbc_subtype)) +
-    ggtitle("Samples in first two PCs, \ncoloured by tnbc_subtype for classQN") +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by subtype of TNBC for GSE76275 after class-specific quantile normalization", 60)) +
+   scale_color_nejm(name = "TNBC Subtype") +
   guides(colour = guide_legend(override.aes = list(size= 4))) +
   theme(axis.text.x = element_text(angle = 90, size = 7),
                title = element_text(size = 10),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5), legend.position = "right", legend.direction = "vertical", legend.key.width = unit(x = 0.5, units = "cm")) 
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.text = element_text(size = 5), 
+        legend.key.height = unit(x = 0.3, units = "cm"),
+        legend.key.width = unit(x = 0.3, units = "cm")) +
+  guides(color = guide_legend(override.aes = list(size = 1)))
+
+ggsave("plots/exploration_plots/PCA_classQN_TNBC_subtype.png")
 ```
 
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2,
+                           colour = factor(pr), shape = triple_negative_status)) +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by progesterone receptor status for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_npg(name = "Progesterone Receptor Status") +
+  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.title = element_text(size = 7),
+        legend.text = element_text(size = 5), 
+        legend.key.height = unit(x = 0.3, units = "cm"),
+        legend.key.width = unit(x = 0.3, units = "cm")) +
+    guides(color = guide_legend(override.aes = list(size = 1)))
 
+
+ggsave("plots/exploration_plots/PCA_classQN_pr_GSE76275.png", bg= "white")
+```
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2,
+                           colour = factor(her2), shape = triple_negative_status)) +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by HER2 amplification status for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_nejm(name = "HER2 Amplification Status") +
+  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.title = element_text(size = 7),
+        legend.text = element_text(size = 5), 
+        legend.key.height = unit(x = 0.3, units = "cm"),
+        legend.key.width = unit(x = 0.3, units = "cm")) + 
+      guides(color = guide_legend(override.aes = list(size = 1)))
+
+ggsave("plots/exploration_plots/PCA_classQN_her2_GSE76275.png", bg = "white")
+```
+
+```{r}
+ggplot(pca.res_joint.annot_df) + 
+  geom_point(mapping = aes(x = PC1, y = PC2,
+                           colour = factor(er), shape = triple_negative_status)) +
+    ggtitle(str_wrap("Samples in first two PCs, coloured by estrogen receptor status for GSE76275 after class-specific quantile normalization", 60)) +
+  scale_color_npg(name = "Estrogen Receptor Status") +
+  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
+  guides(colour = guide_legend(override.aes = list(size= 4))) +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+               title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.title = element_text(size = 7),
+        legend.text = element_text(size = 5), 
+        legend.key.height = unit(x = 0.3, units = "cm"),
+        legend.key.width = unit(x = 0.3, units = "cm")) + 
+      guides(color = guide_legend(override.aes = list(size = 1)))
+
+
+ggsave("plots/exploration_plots/PCA_classQN_er_GSE76275.png")
+```
 
 # Performing hierarchical clustering
 
@@ -1054,56 +1129,49 @@ get_distmat <- function(x){
 
 ```{r}
 row_annot <- mdata_subset %>% 
-  select(set, submission_date, tnbc_subtype)
+  mutate(er = factor(er), pr = factor(pr), her2 = factor(her2)) %>% 
+  select(submission_date, triple_negative_status, pr, er, her2) %>% 
+  rename(`TN status` = triple_negative_status)
 
 head(row_annot)
 ```
 
 
 ```{r}
-set.seed(1)
-row_colours <- list( "set" = c("steelblue", "maroon", "gold"), 
-                     "submission_date" = sample(colorRampPalette(colors = brewer.pal(n = 8, name = "Set2"))(8), 2),
-                     "tnbc_subtype" = sample(colorRampPalette(colors = brewer.pal(n = 8, name = "Dark2"))(8), 5)
-                     )
+set.seed(5)
+row_colours <- list( "TN status" = c("darkgoldenrod4", "darkmagenta"), 
+                     "submission_date" = pal_nejm()(2),
+                     "pr" = pal_lancet()(9)[1:2], 
+                     "er" = pal_lancet()(9)[8:9],
+                     "her2" = pal_lancet()(9)[5:7])
 
-names(row_colours$set) <- as.character(unique(mdata_subset$set))
-names(row_colours$submission_date) <- as.character(unique(mdata_subset$submission_date))
-names(row_colours$tnbc_subtype) <- as.character(unique(mdata_subset$tnbc_subtype))
+names(row_colours[["TN status"]]) <- as.character(unique(row_annot[["TN status"]]))
+names(row_colours$pr) <- as.character(unique(row_annot$pr))
+names(row_colours$er) <- as.character(unique(row_annot$er))
+names(row_colours$her2) <- as.character(unique(row_annot$her2))
+names(row_colours$submission_date) <- as.character(unique(row_annot$submission_date))
 str(row_colours)
 ```
-
-
 ```{r}
-ph1 <- res_1_dists %>% 
-  get_distmat() %>% 
-pheatmap(.,
-         annotation_row = row_annot, 
-         annotation_colors = row_colours,
-         show_colnames = F,
-         show_rownames = F,
-         cutree_rows = 3,
-         main = str_wrap("Heatmap of sample distances for whole QN expression matrix", 60),
-         legend_labels = c("small distance", "large distance"),
-         legend_breaks = c(min(., na.rm = TRUE), 
-                         max(., na.rm = TRUE)))
+my_colours <-  viridis(265^2, begin = 1, end = 0)
 ```
-
 
 ```{r}
 res_joint_dists %>% 
   get_distmat() %>% 
 pheatmap(.,
-         annotation_row = row_annot, 
+         color = my_colours,
+         annotation_row = row_annot,
          annotation_colors = row_colours,
          show_colnames = F,
          show_rownames = F,
          cutree_rows = 2,
          cutree_cols = 2,
-         main = str_wrap("Heatmap of sample distances for class-specific QN expression matrix", 60),
+         main = str_wrap("Heatmap of sample distances for class-specific QN expression matrix for GSE76275", 60),
          legend_labels = c("small distance", "large distance"),
          legend_breaks = c(min(., na.rm = TRUE), 
-                         max(., na.rm = TRUE)))
+                         max(., na.rm = TRUE)), 
+          filename = "plots/exploration_plots/classQN_clustering_heatmap_GSE76275.png")
 ```
 
 
@@ -1202,7 +1270,6 @@ n.sv.classQN
 
 Perform SVA on classQN-normalized expression matrix.
 
-
 ```{r}
 svobj.classQN <- sva(res_joint, mod = full_mod, mod0 = red_mod, n.sv = n.sv.classQN)
 ```
@@ -1221,16 +1288,20 @@ saveRDS(sv_df.classQN, "sv_df_classQN.RDS")
 
 
 ```{r}
-left_join(sv_df.classQN , mdata, by = "geo_accession") %>% 
-  mutate(index = 5) %>% 
-  ggplot() +
-  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
-  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
-  theme_light() +
-  labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
+sv_df.classQN <- left_join(sv_df.classQN , mdata, by = "geo_accession")
+```
+
+
+```{r}
+sv_df.classQN %>% 
+ggplot() +
+  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = er)) +
+  # geom_point(mapping = aes(x = submission_date, y = sv, color = er)) +
+  theme_light() 
+  # labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
   
 
-ggsave("plots/exploration_plots/sva_grouping_classQN.png")
+# ggsave("plots/exploration_plots/sva_grouping_classQN.png")
 ```
 
 
