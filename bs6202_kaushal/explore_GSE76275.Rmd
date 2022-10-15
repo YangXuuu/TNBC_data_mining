@@ -204,7 +204,7 @@ rawData <- readRDS("rawData.RDS")
 ```
 
 
-Looking at the dimensions of the raw expression matrix.
+  Looking at the dimensions of the raw expression matrix.
 
 ```{r}
 exprs(rawData) %>% dim()
