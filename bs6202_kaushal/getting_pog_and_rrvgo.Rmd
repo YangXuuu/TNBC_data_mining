@@ -8,7 +8,9 @@ output:
 ---
 
 ```{r}
-library(clusterProfiler)
+# library(clusterProfiler)
+library(GOSemSim)
+library(org.Hs.eg.db)
 library(rrvgo)
 library(tidyverse)
 library(ggsci)
@@ -32,10 +34,6 @@ limma_dataset_2
 ```
 
 
-```{r}
-intersect(limma_dataset_1$PROBEID, limma_dataset_2$ID) %>% length()
-```
-
 
 ```{r}
 gfs_dataset_1 <- read_csv("dataframe_files/GFS_dataset1_topgenes.csv")
@@ -45,10 +43,6 @@ glimpse(gfs_dataset_1)
 ```{r}
 gfs_dataset_2 <- read_csv("dataframe_files/GFS_dataset2_topgenes.csv")
 glimpse(gfs_dataset_2)
-```
-
-```{r}
-intersect(gfs_dataset_1$Probe, gfs_dataset_2$Probe) %>% length()
 ```
 
 
@@ -68,6 +62,9 @@ get_POG <- function(gene_list_1, gene_list_2, dataset_1, dataset_2){
 
 ```{r}
 limma_pog <- get_POG(limma_dataset_1$PROBEID, limma_dataset_2$ID, "GSE76275", "GSE43358")
+
+limma_pog
+
 limma_pog %>% 
   write_csv("dataframe_files/limma_percentage_of_overlapping_genes.csv")
 ```
@@ -80,5 +77,140 @@ gfs_pog
 
 gfs_pog %>% 
   write_csv("dataframe_files/GFS_percentage_of_overlapping_genes.csv")
+```
+
+# Using rrvgo
+
+```{r}
+gfs_go_dataset_1 <- read_csv("dataframe_files/ora_gfs_dataset1.csv")
+
+glimpse(gfs_go_dataset_1)
+```
+
+```{r}
+gfs_go_dataset_2 <- read_csv("dataframe_files/ora_gfs_dataset2.csv")
+
+glimpse(gfs_go_dataset_2)
+```
+
+```{r}
+limma_go_dataset_1 <- read_csv("dataframe_files/ora_limma_dataset1.csv")
+
+glimpse(limma_go_dataset_1)
+```
+
+
+```{r}
+limma_go_dataset_2 <- read_csv("dataframe_files/ora_limma_dataset2.csv")
+
+glimpse(gfs_go_dataset_2)
+```
+
+
+```{r}
+sem_sim <- GOSemSim::godata(OrgDb = org.Hs.eg.db, ont = "BP", keytype = "GO")
+```
+
+
+
+```{r}
+gfs_go_dataset_1.simMatrix <- calculateSimMatrix(gfs_go_dataset_1$term_id,
+                                orgdb="org.Hs.eg.db",
+                                ont="BP",
+                                method="Rel", 
+                                semdata = sem_sim)
+```
+
+
+```{r}
+gfs_go_dataset_1.reduced <- reduceSimMatrix(gfs_go_dataset_1.simMatrix,
+                threshold=0.7,
+                orgdb="org.Hs.eg.db")
+
+```
+
+
+```{r}
+treemapPlot(gfs_go_dataset_1.reduced)
+```
+
+
+```{r}
+png(filename="plots/gfs_dataset_1_treemap.png",width=800, height=800)
+treemapPlot(gfs_go_dataset_1.reduced)
+dev.off()
+```
+
+
+
+```{r}
+gfs_go_dataset_2.simMatrix <- calculateSimMatrix(gfs_go_dataset_2$term_id,
+                                orgdb="org.Hs.eg.db",
+                                ont="BP",
+                                method="Rel", 
+                                semdata = sem_sim)
+```
+
+
+```{r}
+gfs_go_dataset_2.reduced <- reduceSimMatrix(gfs_go_dataset_2.simMatrix,
+                threshold=0.7,
+                orgdb="org.Hs.eg.db")
+
+```
+
+
+```{r}
+treemapPlot(gfs_go_dataset_2.reduced)
+```
+
+
+```{r}
+png(filename="plots/gfs_dataset_2_treemap.png",width=800, height=800)
+treemapPlot(gfs_go_dataset_2.reduced)
+dev.off()
+```
+
+
+```{r}
+limma_go_dataset_1.simMatrix <- calculateSimMatrix(limma_go_dataset_1$term_id,
+                                orgdb="org.Hs.eg.db",
+                                ont="BP",
+                                method="Rel", 
+                                semdata = sem_sim)
+```
+
+
+```{r}
+limma_go_dataset_1.reduced <- reduceSimMatrix(limma_go_dataset_1.simMatrix,
+                threshold=0.7,
+                orgdb="org.Hs.eg.db")
+
+```
+
+
+```{r}
+treemapPlot(limma_go_dataset_1.reduced)
+```
+
+
+```{r}
+limma_go_dataset_2.simMatrix <- calculateSimMatrix(limma_go_dataset_2$term_id,
+                                orgdb="org.Hs.eg.db",
+                                ont="BP",
+                                method="Rel", 
+                                semdata = sem_sim)
+```
+
+
+```{r}
+limma_go_dataset_2.reduced <- reduceSimMatrix(limma_go_dataset_2.simMatrix,
+                threshold=0.7,
+                orgdb="org.Hs.eg.db")
+```
+
+
+```{r}
+treemapPlot(limma_go_dataset_2.reduced)
 ```
 
