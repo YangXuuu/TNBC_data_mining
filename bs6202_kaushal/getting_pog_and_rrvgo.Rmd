@@ -193,6 +193,12 @@ limma_go_dataset_1.reduced <- reduceSimMatrix(limma_go_dataset_1.simMatrix,
 treemapPlot(limma_go_dataset_1.reduced)
 ```
 
+```{r}
+png(filename="plots/limma_dataset_1_treemap.png",width=800, height=800)
+treemapPlot(limma_go_dataset_1.reduced)
+dev.off()
+```
+
 
 ```{r}
 limma_go_dataset_2.simMatrix <- calculateSimMatrix(limma_go_dataset_2$term_id,
@@ -201,6 +207,7 @@ limma_go_dataset_2.simMatrix <- calculateSimMatrix(limma_go_dataset_2$term_id,
                                 method="Rel", 
                                 semdata = sem_sim)
 ```
+
 
 
 ```{r}
@@ -212,5 +219,21 @@ limma_go_dataset_2.reduced <- reduceSimMatrix(limma_go_dataset_2.simMatrix,
 
 ```{r}
 treemapPlot(limma_go_dataset_2.reduced)
+```
+
+```{r}
+png(filename="plots/limma_dataset_2_treemap.png",width=800, height=800)
+treemapPlot(limma_go_dataset_2.reduced)
+dev.off()
+```
+
+
+```{r}
+mdata_dataset_2 <- read_csv("dataframe_files/metadata_subset_GSE43358.csv")
+```
+
+```{r}
+mdata_dataset_2 %>% 
+  count(triple_negative_status)
 ```
 

@@ -167,7 +167,6 @@ mdata <- mdata[match(mdata$geo_accession, names(celFiles)), ]
 
 Getting only the relevant variables from the metadata.
 
-
 ```{r}
 mdata_subset <- mdata %>%
   select(geo_accession, 
@@ -195,7 +194,7 @@ head(mdata_subset)
 ```
 
 ```{r}
-rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
 ```
 
 
@@ -203,6 +202,7 @@ rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
 # saveRDS(object = rawData, "rawData.RDS")
 rawData <- readRDS("rawData.RDS")
 ```
+
 
 Looking at the dimensions of the raw expression matrix.
 
@@ -352,7 +352,7 @@ list("ER" = mdata_subset$geo_accession[mdata_subset$er == "Positive"],
   ggtitle(str_wrap("Upset plot for different combinations of ER, PR, and HER2 status in the non-TNBC samples in GSE76275", 60)) +
   theme(title = element_text(size = 7))
 
-# ggsave("plots/exploration_plots/GSE76275_nonTNBC_upset.png")
+ggsave("plots/exploration_plots/GSE76275_nonTNBC_upset.png")
 ```
 
 Reordering the columns in the metadata.
