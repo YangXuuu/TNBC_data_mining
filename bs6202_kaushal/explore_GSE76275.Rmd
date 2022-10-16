@@ -136,6 +136,13 @@ mdata <- mdata %>%
 head(mdata) 
 ```
 
+Reordering the columns in the metadata.
+
+```{r}
+mdata <- select(mdata, geo_accession, everything())
+head(mdata)
+```
+
 # Reading in raw probe intensity data
 
 Celfiles downloaded from GEO and kept the folder celfiles/
@@ -255,6 +262,37 @@ ggsave(filename = "plots/exploration_plots/GSE76275_tnbc_proportion_barplot.png"
 
 ```{r}
 mdata_subset %>% 
+  count(triple_negative_status, set) %>% 
+  mutate(proportion = round(n/sum(n), 3)) %>% 
+  ggplot() +
+  geom_col(mapping = aes(x = triple_negative_status,
+                         y = proportion,
+                         fill = set)) +
+    geom_text(aes(x = triple_negative_status, 
+                y = proportion, 
+                label = proportion, 
+                group = set), 
+            size = 3, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+    theme(title = element_text(size = 10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.5),
+          legend.direction = "vertical", legend.position = "right") +
+  scale_fill_npg(name = "Sample Set") +
+  labs(x = "TNBC Status",
+       y = "Proportion",
+       title = str_wrap("Proportions of sample set values for GSE76275", 60))
+
+ggsave(filename = "plots/exploration_plots/GSE76275_set_proportion_barplot.png")
+```
+
+
+
+```{r}
+mdata_subset %>% 
   count(triple_negative_status, pr) %>% 
   mutate(proportion = round(n/sum(n), 3)) %>% 
   ggplot() +
@@ -341,6 +379,20 @@ mdata_subset %>%
 ggsave(filename = "plots/exploration_plots/GSE76275_her2_proportion_barplot.png")
 ```
 
+```{r}
+mdata_subset %>% 
+  ggplot() +
+  geom_boxplot(aes(x = triple_negative_status, y = age_years, fill = set)) +
+  scale_fill_npg(name = "Sample Set") +
+  theme_light() +
+    labs(x = "Triple Negative Status",
+         y = "Age in Years",
+         title = str_wrap("Age distribution of sample sets for GSE76275", 60))
+  
+
+ggsave("plots/exploration_plots/GSE76275_age_boxplot.png")
+```
+
 
 
 ```{r}
@@ -349,19 +401,11 @@ list("ER" = mdata_subset$geo_accession[mdata_subset$er == "Positive"],
      "HER2" = mdata_subset$geo_accession[mdata_subset$her2 == "Positive"]) %>%
   fromList(.) %>% 
   upset(., c("ER", "PR", "HER2"), width_ratio = 0.2) +
-  ggtitle(str_wrap("Upset plot for different combinations of ER, PR, and HER2 status in the non-TNBC samples in GSE76275", 60)) +
-  theme(title = element_text(size = 7))
+  ggtitle(str_wrap("Upset plot for different combinations of ER, PR, and HER2 status in the non-TNBC samples in GSE76275", 40)) +
+  theme(title = element_text(size = 10))
 
 ggsave("plots/exploration_plots/GSE76275_nonTNBC_upset.png")
 ```
-
-Reordering the columns in the metadata.
-
-```{r}
-mdata <- select(mdata, geo_accession, everything())
-head(mdata)
-```
-
 
 # Performing RMA
 
@@ -604,8 +648,8 @@ res_joint_df_long <- res_joint %>%
 
 
 ```{r}
-# saveRDS(object = res_joint_df_long, "res_joint_df_long.RDS")
-res_joint_df_long <- readRDS("res_joint_df_long.RDS")
+saveRDS(object = res_joint_df_long, "res_joint_df_long.RDS")
+# res_joint_df_long <- readRDS("res_joint_df_long.RDS")
 ```
 
 
@@ -1130,8 +1174,12 @@ get_distmat <- function(x){
 ```{r}
 row_annot <- mdata_subset %>% 
   mutate(er = factor(er), pr = factor(pr), her2 = factor(her2)) %>% 
-  select(submission_date, triple_negative_status, pr, er, her2) %>% 
-  rename(`TN status` = triple_negative_status)
+  select(set, submission_date, pr, er, her2) %>% 
+    rename(`Sample set` = set, 
+           `Submission date` = submission_date,
+           `HER2 status` = her2,
+           `ER status` = er,
+           `PR status` = pr)
 
 head(row_annot)
 ```
@@ -1139,17 +1187,17 @@ head(row_annot)
 
 ```{r}
 set.seed(5)
-row_colours <- list( "TN status" = c("darkgoldenrod4", "darkmagenta"), 
-                     "submission_date" = pal_nejm()(2),
-                     "pr" = pal_lancet()(9)[1:2], 
-                     "er" = pal_lancet()(9)[8:9],
-                     "her2" = pal_lancet()(9)[5:7])
+row_colours <- list( "Sample set" = c("darkgoldenrod4", "darkmagenta", "salmon"), 
+                     "Submission date" = pal_nejm()(2),
+                     "PR status" = pal_lancet()(9)[1:2], 
+                     "ER status" = pal_lancet()(9)[8:9],
+                     "HER2 status" = pal_npg()(9)[c(3, 2, 8)])
 
-names(row_colours[["TN status"]]) <- as.character(unique(row_annot[["TN status"]]))
-names(row_colours$pr) <- as.character(unique(row_annot$pr))
-names(row_colours$er) <- as.character(unique(row_annot$er))
-names(row_colours$her2) <- as.character(unique(row_annot$her2))
-names(row_colours$submission_date) <- as.character(unique(row_annot$submission_date))
+names(row_colours[["Sample set"]]) <- as.character(unique(row_annot[["Sample set"]]))
+names(row_colours[["PR status"]]) <- unique(row_annot[["PR status"]])
+names(row_colours[["ER status"]]) <- unique(row_annot[["ER status"]])
+names(row_colours[["HER2 status"]]) <- unique(row_annot[["HER2 status"]])
+names(row_colours[["Submission date"]]) <- as.character(unique(row_annot[["Submission date"]]))
 str(row_colours)
 ```
 ```{r}
@@ -1313,6 +1361,11 @@ In this attempt, I perform no quantile normalization while performing RMA. If QN
 rawData.summary <- rma(rawData, background = TRUE, normalize = FALSE)
 ```
 
+```{r}
+# saveRDS(rawData.summary, "rawData_summary.RDS")
+rawData.summary <- readRDS("rawData_summary.RDS")
+```
+
 
 ```{r}
 rawData.summary_df_long <- rawData.summary %>% 
@@ -1324,16 +1377,30 @@ rawData.summary_df_long <- rawData.summary %>%
 ```
 
 
+```{r}
+# saveRDS(rawData.summary_df_long, "rawData_summary_df_long.RDS")
+rawData.summary_df_long <- readRDS("rawData_summary_df_long.RDS")
+```
+
 
 ```{r}
 p3 <- rawData.summary_df_long %>% 
   ggplot() +
   geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, 
-                             color = set)) +
-  labs(x = "samples", 
-       title = str_wrap("Sample-wise log2 intensity boxplots in the absence of QN", 60)) +
-  scale_color_npg() +
-  theme(axis.text.x = element_blank())
+                             color = set))
+```
+
+
+```{r}
+p3 <- p3 + labs(x = "samples", 
+       title = str_wrap("Sample-wise log2 intensity boxplots for non- quantile normalized expression values for GSE76275", 60)) +
+  scale_color_npg(name = "Triple Negative Status") +
+  theme_light() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        title = element_text(size = 10),
+        legend.position = "top", 
+        legend.direction = "horizontal")
 
 p3
 ```
@@ -1343,6 +1410,26 @@ p3
 ggsave("plots/exploration_plots/GSE76275_noQN_boxplots.png", 
        p3, 
        units = "cm", width = 30, height = 10)
+```
+
+
+Create full model matrix.
+
+```{r}
+full_mod <- mdata_subset %>% 
+  select(geo_accession, triple_negative_status) %>% 
+  arrange(triple_negative_status) %>% 
+  model.matrix(~triple_negative_status, data = .)
+
+head(full_mod)
+```
+
+Create reduced model matrix.
+
+```{r}
+red_mod <- model.matrix(~1, data = mdata_subset)
+
+head(red_mod)
 ```
 
 Getting the number of surrogate variables in the absence of quantile normalization.
@@ -1358,6 +1445,7 @@ n.sv.nonorm
 ```
 
 
+
 ```{r}
 svobj.nonorm <- sva(exprs(rawData.summary), mod = full_mod, mod0 = red_mod, n.sv = n.sv.nonorm)
 ```
@@ -1369,22 +1457,97 @@ sv_df.nonorm <- tibble("geo_accession" = colnames(exprs(rawData.summary)), "sv" 
 head(sv_df.nonorm)
 ```
 
-
 ```{r}
-left_join(sv_df.nonorm, mdata, by = "geo_accession") %>% 
-  mutate(index = 5) %>% 
-  ggplot() +
-  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
-  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
-  theme_light() +
-  labs(y = "Surrogate Variable Value", 
-       title = str_wrap("Distribution of latent variable estimated by SVA for different grouping factors", 60))
-
-ggsave("plots/exploration_plots/sva_grouping_noQN.png")
+saveRDS(sv_df.nonorm, "sv_df_nonorm.RDS")
+# sv_df.nonorm <- readRDS("sv_df_nonorm.RDS")
 ```
 
 
 ```{r}
+left_join(sv_df.nonorm, mdata_subset, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
+  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
+  scale_fill_npg(name = "Sample Set") +
+  theme_light() +
+  labs(x = "Submission Date", 
+         y = "Surrogate Variable Value", 
+       title = str_wrap("Distribution of latent variable estimated by SVA for submission dates, coloured by sample set", 50))
 
+ggsave("plots/exploration_plots/sva_grouping_date_noQN.png")
+```
+
+
+```{r}
+left_join(sv_df.nonorm, mdata_subset, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = pr, y = sv, fill = set)) +
+  scale_fill_npg(name = "Sample Set") +
+  theme_light() +
+   labs(x = "Progesterone Receptor Status",
+    y = "Surrogate Variable Value",
+       title = str_wrap("Distribution of latent variable estimated by SVA for progesterone receptor status, coloured by sample set", 50))
+ 
+
+ggsave("plots/exploration_plots/sva_grouping_pr_noQN.png")
+```
+
+
+```{r}
+left_join(sv_df.nonorm, mdata_subset, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = er, y = sv, fill = set)) +
+  scale_fill_npg(name = "Sample Set") +
+  theme_light() +
+   labs(x = "Estrogen Receptor Status",
+    y = "Surrogate Variable Value",
+       title = str_wrap("Distribution of latent variable estimated by SVA for estrogen receptor status, coloured by sample set", 50))
+ 
+
+ggsave("plots/exploration_plots/sva_grouping_er_noQN.png")
+```
+
+```{r}
+left_join(sv_df.nonorm, mdata_subset, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = her2, y = sv, fill = set)) +
+  scale_fill_npg(name = "Sample Set") +
+  theme_light() +
+   labs(x = "HER2 Amplification Status",
+    y = "Surrogate Variable Value",
+       title = str_wrap("Distribution of latent variable estimated by SVA for HER2 amplification status, coloured by sample set", 50))
+ 
+
+ggsave("plots/exploration_plots/sva_grouping_her2_noQN.png")
+```
+
+
+
+```{r}
+left_join(sv_df.nonorm, mdata_subset, by = "geo_accession") %>% 
+  mutate(index = 5) %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = as.numeric(age_years), y = sv, color = set)) +
+  scale_color_npg(name = "Sample set") +
+  theme(axis.text.x = element_text(angle = 90, size = 7),
+        title = element_text(size = 10),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black", size = 0.5),
+        legend.title = element_text(size = 7),
+        legend.text = element_text(size = 5), 
+        legend.key.height = unit(x = 0.3, units = "cm"),
+        legend.key.width = unit(x = 0.3, units = "cm")) + 
+      guides(color = guide_legend(override.aes = list(size = 1))) +
+  labs(x = "Age in Years",
+       y = "Surrogate Variable Value",
+       title = str_wrap("Scatterplot of age latent variable estimated by SVA versus age", 50))
+
+ggsave("plots/exploration_plots/sva_grouping_age_noQN.png")
 ```
 
