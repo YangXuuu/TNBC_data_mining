@@ -8,13 +8,20 @@ output:
 ---
 
 ```{r}
-# library(clusterProfiler)
+library(hgu133plus2.db)
 library(GOSemSim)
 library(org.Hs.eg.db)
 library(rrvgo)
 library(tidyverse)
 library(ggsci)
 ```
+
+
+```{r}
+keytypes(hgu133plus2.db)
+```
+
+
 
 # Get POG
 
@@ -25,14 +32,61 @@ glimpse(limma_dataset_1)
 
 
 ```{r}
+length(limma_dataset_1_gene_list)
+limma_dataset_1_gene_list <- limma_dataset_1_gene_list[!is.na(limma_dataset_1_gene_list)]
+length(limma_dataset_1_gene_list)
+```
+
+
+```{r}
+limma_dataset_1_gene_list <- mapIds(x = hgu133plus2.db, keys = limma_dataset_1$PROBEID, 
+       keytype = "PROBEID", column = "ENTREZID")
+
+head(limma_dataset_1_gene_list)
+```
+
+```{r}
+limma_dataset_1_gene_list %>% 
+  enframe(name = "ProbeID", value = "ENTREZID") %>% 
+  write_csv("dataframe_files/limma_dataset_1_DEG_entrez.csv")
+  
+```
+
+
+```{r}
 limma_dataset_2 <- read_csv("dataframe_files/limma_dataset2_topgenes.csv")
 glimpse(limma_dataset_2)
 ```
 
+
+
 ```{r}
-limma_dataset_2
+limma_dataset_2_gene_list <- mapIds(x = hgu133plus2.db, 
+                                    keys = limma_dataset_2$ID, 
+                                    keytype = "PROBEID", 
+                                    column = "ENTREZID")
+
+head(limma_dataset_2_gene_list)
 ```
 
+```{r}
+limma_dataset_2_gene_list <- limma_dataset_2_gene_list[!is.na(limma_dataset_2_gene_list)]
+length(limma_dataset_2_gene_list)
+```
+
+
+```{r}
+limma_dataset_2_gene_list %>% 
+  enframe(name = "ProbeID", value = "ENTREZID") %>% 
+  write_csv("dataframe_files/limma_dataset_2_DEG_entrez.csv")
+  
+```
+
+
+```{r}
+intersect(limma_dataset_1_gene_list, limma_dataset_2_gene_list) %>% 
+  length()
+```
 
 
 ```{r}
@@ -40,9 +94,65 @@ gfs_dataset_1 <- read_csv("dataframe_files/GFS_dataset1_topgenes.csv")
 glimpse(gfs_dataset_1)
 ```
 
+
+```{r}
+gfs_dataset_1_gene_list <- mapIds(x = hgu133plus2.db, 
+                                    keys = gfs_dataset_1$Probe, 
+                                    keytype = "PROBEID", 
+                                    column = "ENTREZID")
+
+head(gfs_dataset_1_gene_list)
+```
+
+```{r}
+length(gfs_dataset_1_gene_list)
+gfs_dataset_1_gene_list <- gfs_dataset_1_gene_list[!is.na(gfs_dataset_1_gene_list)]
+length(gfs_dataset_1_gene_list)
+```
+
+
+```{r}
+gfs_dataset_1_gene_list %>% 
+  enframe(name = "ProbeID", value = "ENTREZID") %>% 
+  write_csv("dataframe_files/gfs_dataset_1_DEG_entrez.csv")
+  
+```
+
+
 ```{r}
 gfs_dataset_2 <- read_csv("dataframe_files/GFS_dataset2_topgenes.csv")
 glimpse(gfs_dataset_2)
+```
+
+
+
+```{r}
+gfs_dataset_2_gene_list <- mapIds(x = hgu133plus2.db, 
+                                    keys = gfs_dataset_2$Probe, 
+                                    keytype = "PROBEID", 
+                                    column = "ENTREZID")
+
+head(gfs_dataset_2_gene_list)
+```
+
+```{r}
+length(gfs_dataset_2_gene_list)
+gfs_dataset_2_gene_list <- gfs_dataset_2_gene_list[!is.na(gfs_dataset_2_gene_list)]
+length(gfs_dataset_2_gene_list)
+```
+
+
+```{r}
+gfs_dataset_2_gene_list %>% 
+  enframe(name = "ProbeID", value = "ENTREZID") %>% 
+  write_csv("dataframe_files/gfs_dataset_2_DEG_entrez.csv")
+  
+```
+
+
+```{r}
+intersect(gfs_dataset_1_gene_list, gfs_dataset_2_gene_list) %>% 
+  length()
 ```
 
 
@@ -60,8 +170,9 @@ get_POG <- function(gene_list_1, gene_list_2, dataset_1, dataset_2){
 }
 ```
 
+
 ```{r}
-limma_pog <- get_POG(limma_dataset_1$PROBEID, limma_dataset_2$ID, "GSE76275", "GSE43358")
+limma_pog <- get_POG(limma_dataset_1_gene_list, limma_dataset_2_gene_list, "GSE76275", "GSE43358")
 
 limma_pog
 
@@ -71,7 +182,7 @@ limma_pog %>%
 
 
 ```{r}
-gfs_pog <- get_POG(gfs_dataset_1$Probe, gfs_dataset_2$Probe, "GSE76275", "GSE43358")
+gfs_pog <- get_POG(gfs_dataset_1_gene_list, gfs_dataset_2_gene_list, "GSE76275", "GSE43358")
 
 gfs_pog
 
@@ -81,17 +192,20 @@ gfs_pog %>%
 
 # Using rrvgo
 
+
 ```{r}
 gfs_go_dataset_1 <- read_csv("dataframe_files/ora_gfs_dataset1.csv")
 
 glimpse(gfs_go_dataset_1)
 ```
 
+
 ```{r}
 gfs_go_dataset_2 <- read_csv("dataframe_files/ora_gfs_dataset2.csv")
 
 glimpse(gfs_go_dataset_2)
 ```
+
 
 ```{r}
 limma_go_dataset_1 <- read_csv("dataframe_files/ora_limma_dataset1.csv")
@@ -231,6 +345,7 @@ dev.off()
 ```{r}
 mdata_dataset_2 <- read_csv("dataframe_files/metadata_subset_GSE43358.csv")
 ```
+
 
 ```{r}
 mdata_dataset_2 %>% 
