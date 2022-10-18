@@ -10,6 +10,8 @@ Access google document for BS6202 report at [this link](https://docs.google.com/
 
 Access google document for BS6203 report at [this link](https://docs.google.com/document/d/1RH9IbL075sInZO1FrJQiHTrVeBeUzOaE2zhC1-BkvHY/edit?usp=sharing)
 
+Access presentation slides for BS6202 at [this link](https://docs.google.com/presentation/d/1jFMmQ3ZTBrAfvvTT7fBpDVWecNISE4ALu3RucK_Lp5s/edit#slide=id.g14b826a7f19_0_101)
+
 Project Graphics and Visualisation Presentation Slide at [this link](https://docs.google.com/presentation/d/1NPtJ5HFdRHuLHTeOj2lNmTtQgsCbcLwP/edit?usp=sharing&ouid=107696356622137707102&rtpof=true&sd=true)
 
 Samantha's exploration at [this link](https://rpubs.com/kjmkjm/950292).
