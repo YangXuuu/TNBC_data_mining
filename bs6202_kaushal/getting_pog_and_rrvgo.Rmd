@@ -22,8 +22,9 @@ keytypes(hgu133plus2.db)
 ```
 
 
+# Get POG by intersecting DEGs from both datasets
 
-# Get POG
+## Read in limma DEGs
 
 ```{r}
 limma_dataset_1 <- read_csv("dataframe_files/limma_dataset1_topgenes.csv")
@@ -111,6 +112,7 @@ setdiff(limma_dataset_1_gene_list, limma_dataset_2_gene_list) %>%
   length()
 ```
 
+## Read in GFS DEGs
 
 ```{r}
 gfs_dataset_1 <- read_csv("dataframe_files/GFS_dataset1_topgenes.csv")
@@ -154,7 +156,6 @@ glimpse(gfs_dataset_2)
 ```
 
 
-
 ```{r}
 gfs_dataset_2_gene_list <- mapIds(x = hgu133plus2.db, 
                                     keys = gfs_dataset_2$Probe, 
@@ -190,6 +191,7 @@ intersect(gfs_dataset_1_gene_list, gfs_dataset_2_gene_list) %>%
   length()
 ```
 
+
 ```{r}
 setdiff(gfs_dataset_2_gene_list, gfs_dataset_1_gene_list) %>% 
   length()
@@ -202,6 +204,7 @@ gfs_dataset_1_gene_list %>%
   length()
 ```
 
+Function to actually get POGs.
 
 ```{r}
 get_POG <- function(gene_list_1, gene_list_2, dataset_1, dataset_2){
@@ -241,8 +244,7 @@ gfs_pog %>%
   write_csv("dataframe_files/GFS_percentage_of_overlapping_genes.csv")
 ```
 
-# Using rrvgo
-
+# Using rrvgo to produce the treemaps
 
 ```{r}
 gfs_go_dataset_1 <- read_csv("dataframe_files/ora_gfs_dataset1.csv")
@@ -397,9 +399,4 @@ dev.off()
 mdata_dataset_2 <- read_csv("dataframe_files/metadata_subset_GSE43358.csv")
 ```
 
-
-```{r}
-mdata_dataset_2 %>% 
-  count(triple_negative_status)
-```
 
