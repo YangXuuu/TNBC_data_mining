@@ -31,12 +31,6 @@ glimpse(limma_dataset_1)
 ```
 
 
-```{r}
-length(limma_dataset_1_gene_list)
-limma_dataset_1_gene_list <- limma_dataset_1_gene_list[!is.na(limma_dataset_1_gene_list)]
-length(limma_dataset_1_gene_list)
-```
-
 
 ```{r}
 limma_dataset_1_gene_list <- mapIds(x = hgu133plus2.db, keys = limma_dataset_1$PROBEID, 
@@ -44,6 +38,18 @@ limma_dataset_1_gene_list <- mapIds(x = hgu133plus2.db, keys = limma_dataset_1$P
 
 head(limma_dataset_1_gene_list)
 ```
+
+```{r}
+limma_dataset_1_gene_list %>% 
+  unique() %>%
+  length()
+limma_dataset_1_gene_list <- limma_dataset_1_gene_list[!is.na(limma_dataset_1_gene_list)] %>% 
+  unique()
+limma_dataset_1_gene_list %>% 
+  unique() %>%
+  length()
+```
+
 
 ```{r}
 limma_dataset_1_gene_list %>% 
@@ -70,8 +76,14 @@ head(limma_dataset_2_gene_list)
 ```
 
 ```{r}
-limma_dataset_2_gene_list <- limma_dataset_2_gene_list[!is.na(limma_dataset_2_gene_list)]
-length(limma_dataset_2_gene_list)
+limma_dataset_2_gene_list %>% 
+  unique() %>%
+  length()
+limma_dataset_2_gene_list <- limma_dataset_2_gene_list[!is.na(limma_dataset_2_gene_list)] %>% 
+  unique()
+limma_dataset_2_gene_list %>% 
+  unique() %>%
+  length()
 ```
 
 
@@ -84,7 +96,18 @@ limma_dataset_2_gene_list %>%
 
 
 ```{r}
+length(limma_dataset_1_gene_list) + length(limma_dataset_2_gene_list)
+```
+
+
+```{r}
 intersect(limma_dataset_1_gene_list, limma_dataset_2_gene_list) %>% 
+  length()
+```
+
+
+```{r}
+setdiff(limma_dataset_1_gene_list, limma_dataset_2_gene_list) %>% 
   length()
 ```
 
@@ -104,10 +127,16 @@ gfs_dataset_1_gene_list <- mapIds(x = hgu133plus2.db,
 head(gfs_dataset_1_gene_list)
 ```
 
+
 ```{r}
-length(gfs_dataset_1_gene_list)
-gfs_dataset_1_gene_list <- gfs_dataset_1_gene_list[!is.na(gfs_dataset_1_gene_list)]
-length(gfs_dataset_1_gene_list)
+gfs_dataset_1_gene_list %>% 
+  unique() %>%
+  length()
+gfs_dataset_1_gene_list <- gfs_dataset_1_gene_list[!is.na(gfs_dataset_1_gene_list)] %>% 
+  unique()
+gfs_dataset_1_gene_list %>% 
+  unique() %>%
+  length()
 ```
 
 
@@ -135,10 +164,16 @@ gfs_dataset_2_gene_list <- mapIds(x = hgu133plus2.db,
 head(gfs_dataset_2_gene_list)
 ```
 
+
 ```{r}
-length(gfs_dataset_2_gene_list)
-gfs_dataset_2_gene_list <- gfs_dataset_2_gene_list[!is.na(gfs_dataset_2_gene_list)]
-length(gfs_dataset_2_gene_list)
+gfs_dataset_2_gene_list %>% 
+  unique() %>%
+  length()
+gfs_dataset_2_gene_list <- gfs_dataset_2_gene_list[!is.na(gfs_dataset_2_gene_list)] %>% 
+  unique()
+gfs_dataset_2_gene_list %>% 
+  unique() %>%
+  length()
 ```
 
 
@@ -152,6 +187,18 @@ gfs_dataset_2_gene_list %>%
 
 ```{r}
 intersect(gfs_dataset_1_gene_list, gfs_dataset_2_gene_list) %>% 
+  length()
+```
+
+```{r}
+setdiff(gfs_dataset_2_gene_list, gfs_dataset_1_gene_list) %>% 
+  length()
+```
+
+
+```{r}
+gfs_dataset_1_gene_list %>% 
+  unique() %>% 
   length()
 ```
 
@@ -174,7 +221,9 @@ get_POG <- function(gene_list_1, gene_list_2, dataset_1, dataset_2){
 ```{r}
 limma_pog <- get_POG(limma_dataset_1_gene_list, limma_dataset_2_gene_list, "GSE76275", "GSE43358")
 
-limma_pog
+limma_pog %>% 
+  group_by(`Intersection Size`) %>% 
+  mutate(Average = mean(Value))
 
 limma_pog %>% 
   write_csv("dataframe_files/limma_percentage_of_overlapping_genes.csv")
@@ -184,7 +233,9 @@ limma_pog %>%
 ```{r}
 gfs_pog <- get_POG(gfs_dataset_1_gene_list, gfs_dataset_2_gene_list, "GSE76275", "GSE43358")
 
-gfs_pog
+gfs_pog %>% 
+  group_by(`Intersection Size`) %>% 
+  mutate(Average = mean(Value))
 
 gfs_pog %>% 
   write_csv("dataframe_files/GFS_percentage_of_overlapping_genes.csv")

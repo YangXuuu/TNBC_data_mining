@@ -254,6 +254,7 @@ mdata_subset %>%
             position = position_stack(vjust = 0.5), 
             color = "white") +
   scale_fill_npg(name = "Triple Negative Status") +
+  guides(fill = guide_legend(reverse = TRUE)) +
   labs(x = "Proportion",
        title = str_wrap("Proportions of TNBC status values for GSE76275", 60))
 
@@ -293,29 +294,35 @@ ggsave(filename = "plots/exploration_plots/GSE76275_set_proportion_barplot.png")
 
 ```{r}
 mdata_subset %>% 
-  count(triple_negative_status, pr) %>% 
+  filter(triple_negative_status == "not TN") %>% 
+  count(pr) %>% 
   mutate(proportion = round(n/sum(n), 3)) %>% 
   ggplot() +
-  geom_col(mapping = aes(x = pr,
-                         y = proportion,
-                         fill = triple_negative_status)) +
-    geom_text(aes(x = pr, 
-                y = proportion, 
-                label = proportion, 
-                group = triple_negative_status), 
-            size = 3, 
-            position = position_stack(vjust = 0.5), 
-            color = "white") +
-    theme(title = element_text(size = 10),
+  geom_col(mapping = aes(y = "dummy_group",
+                         x = proportion,
+                         fill = pr )) +
+    theme(axis.text.x = element_text(angle = 90, size = 7),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank(),
+          title = element_text(size = 10),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.line = element_line(colour = "black", size = 0.5),
-          legend.direction = "vertical", legend.position = "right") +
-  scale_fill_npg(name = "Triple Negative Status") +
-  labs(x = "Progesterone Receptor Status",
-       y = "Proportion",
-       title = str_wrap("Proportions of progesterone receptor status values for GSE76275", 60))
+          legend.direction = "horizontal", legend.position = "top") +
+  geom_text(aes(y = 1, 
+                x = proportion, 
+                label = proportion, 
+                group = pr ), 
+            size = 5, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+  scale_fill_npg(name = "Progesterone Receptor Status") +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "Proportion",
+       title = str_wrap("Proportions of progesterone receptor status values for non-TNBC samples in GSE7627", 60))
+
 
 ggsave(filename = "plots/exploration_plots/GSE76275_pr_proportion_barplot.png")
 ```
@@ -323,58 +330,68 @@ ggsave(filename = "plots/exploration_plots/GSE76275_pr_proportion_barplot.png")
 
 ```{r}
 mdata_subset %>% 
-  count(triple_negative_status, er) %>% 
+  filter(triple_negative_status == "not TN") %>% 
+  count(er) %>%  
   mutate(proportion = round(n/sum(n), 3)) %>% 
   ggplot() +
-  geom_col(mapping = aes(x = er,
-                         y = proportion,
-                         fill = triple_negative_status)) +
-      geom_text(aes(x = er, 
-                y = proportion, 
-                label = proportion, 
-                group = triple_negative_status), 
-            size = 3, 
-            position = position_stack(vjust = 0.5), 
-            color = "white") +
-    theme(title = element_text(size = 10),
+  geom_col(mapping = aes(y = "dummy_group",
+                         x = proportion,
+                         fill = er)) +
+    theme(axis.text.x = element_text(angle = 90, size = 7),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank(),
+          title = element_text(size = 10),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.line = element_line(colour = "black", size = 0.5),
-          legend.direction = "vertical", legend.position = "right") +
-  scale_fill_npg(name = "Triple Negative Status") +
-  labs(x = "Estrogen Receptor Status",
-       y = "Proportion",
-       title = str_wrap("Proportions of estrogen receptor status values for GSE76275", 60))
+          legend.direction = "horizontal", legend.position = "top") +
+  geom_text(aes(y = 1, 
+                x = proportion, 
+                label = proportion, 
+                group = er), 
+            size = 5, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+  scale_fill_npg(name = "Estrogen Receptor Status") +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "Proportion",
+       title = str_wrap("Proportions of estrogen receptor status values for non-TNBC samples in GSE7627", 60))
 
 ggsave(filename = "plots/exploration_plots/GSE76275_er_proportion_barplot.png")
 ```
 
 ```{r}
 mdata_subset %>% 
-  count(triple_negative_status, her2) %>% 
+  filter(triple_negative_status == "not TN") %>% 
+  count(her2) %>%  
   mutate(proportion = round(n/sum(n), 3)) %>% 
   ggplot() +
-  geom_col(mapping = aes(x = her2,
-                         y = proportion,
-                         fill = triple_negative_status)) +
-    geom_text(aes(x = her2, 
-                y = proportion, 
-                label = proportion, 
-                group = triple_negative_status), 
-            size = 3, 
-            position = position_stack(vjust = 0.5), 
-            color = "white") +
-    theme(title = element_text(size = 10),
+  geom_col(mapping = aes(y = "dummy_group",
+                         x = proportion,
+                         fill = her2)) +
+    theme(axis.text.x = element_text(angle = 90, size = 7),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank(),
+          title = element_text(size = 10),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.line = element_line(colour = "black", size = 0.5),
-          legend.direction = "vertical", legend.position = "right") +
-  scale_fill_npg(name = "Triple Negative Status") +
-  labs(x = "HER2 Amplification Status",
-       y = "Proportion",
-       title = str_wrap("Proportions of HER2 amplification status values for GSE76275", 60))
+          legend.direction = "horizontal", legend.position = "top") +
+  geom_text(aes(y = 1, 
+                x = proportion, 
+                label = proportion, 
+                group = her2), 
+            size = 5, 
+            position = position_stack(vjust = 0.5), 
+            color = "white") +
+  scale_fill_npg(name = "HER2 Amplification Status") +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = "Proportion",
+       title = str_wrap("Proportions of HER2 amplification status values for non-TNBC samples in GSE7627", 60))
 
 ggsave(filename = "plots/exploration_plots/GSE76275_her2_proportion_barplot.png")
 ```
