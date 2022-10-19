@@ -155,6 +155,9 @@ emat_df <- exprs(rawData_summary) %>%
 head(emat_df)
 ```
 
+
+Write the expression matrix to be fed into GFS.
+
 ```{r}
 emat_df %>% 
   write_csv("dataframe_files/GSE43358_withoutQN.csv")

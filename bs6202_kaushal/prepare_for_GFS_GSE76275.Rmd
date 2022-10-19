@@ -17,117 +17,24 @@ library(tidyverse)
 ```
 
 
-## GFS functions
-
-```{r}
-# Given a vector and the theta 1 and theta 2 values, return a vector with the fuzzy score
-fuzzy_score_ranks <- function(x, theta_1, theta_2){
-  ranked_x <- rank(desc(x))
-  q1 <- quantile(ranked_x, theta_1)
-  q2 <- quantile(ranked_x, theta_2)
-
-  q_diff <- q1 - q2
-  scored <- map_dbl(ranked_x, ~{
-    if(.x < q1){
-      return(1)
-    } else if(.x > q1 && .x <= q2){
-      fuzzy_score <- (.x - q2)/q_diff
-      return(fuzzy_score)
-    } else {
-      return(0)
-    }
-  })
-  return(scored)
-}
-```
-
-
-
-
-```{r}
-# given a matrix and theta 1 and theta 2, return a fuzzy-scored matrix
-## Uses the fuzzy_score_ranks function defined above on every column vector of the matrix
-perform_gfs <- function(emat, theta_1, theta_2){
-  sample_ids <- colnames(emat)
-  probe_ids <- rownames(emat)
-  # iterating over the columns of the matrix to return a list of vectors
-  scored_list <- map(1:ncol(emat), .f = ~{
-    col_values <- emat[, .x]
-    ranked_col <- rank(col_values)
-    scored_column <- fuzzy_score_ranks(ranked_col, theta_1, theta_2)
-    return(scored_column)
-  }, emat = emat)
-  # column bind the list of vectors to create a matrix
-  scored_mat <- do.call(cbind, scored_list)
-  # return the annotation to the new fuzzy-scored matrix
-  colnames(scored_mat) <- sample_ids
-  rownames(scored_mat) <- probe_ids
-  return(scored_mat)
-}
-```
-
-Create a test matrix.
-
-```{r}
-temp_emat <- replicate(n = 10, expr = sample(c(100:110), 10, replace = FALSE), simplify = TRUE)
-emat
-```
-Annotate the test matrix.
-
-```{r}
-sample_ids <- paste("sample", 1:10, sep = "_")
-colnames(temp_emat) <- sample_ids
-rownames(temp_emat) <- letters[1:10]
-temp_emat
-```
-
-
-```{r}
-perform_gfs(temp_emat, 0.10, 0.20)
-```
 
 # Prepare the metadata
 
 ## Getting data from GEOquery
 
 ```{r}
-# geodata <- GEOquery::getGEO(GEO = "GSE76275", destdir = "./tempfiles")
-# geodata <- GEOquery::getGEO(filename = "./tempfiles/GSE76275_series_matrix.txt.gz")
+geodata <- GEOquery::getGEO(GEO = "GSE76275", destdir = "./tempfiles")
 ```
 
 
 ```{r}
-# saveRDS(geodata, "geodata.RDS")
-geodata <- readRDS("geodata.RDS")
+mdata <- geodata %>%
+  pluck(1) %>%
+  phenoData() %>%
+  pData() %>% as_tibble()
 ```
 
 
-```{r}
-# mdata <- geodata %>% 
-#   pluck(1) %>% 
-#   phenoData() %>%
-#   pData() %>% as_tibble()
-```
-
-
-```{r}
-# feature_data <- geodata %>% 
-#   pluck(1) %>% 
-#   featureData()
-  
-```
-
-
-```{r}
-# write_csv(mdata, "raw_mdata.csv")
-mdata <- read_csv("raw_mdata.csv")
-```
-
-
-```{r}
-# saveRDS(feature_data, "featureData.RDS")
-# feature_data <- readRDS("featureData.RDS")
-```
 
 ## Cleaning the metadata
 
@@ -150,6 +57,7 @@ colnames(mdata) <- cnames_processed
 rm(cnames, cnames_processed)
   
 ```
+
 
 ```{r}
 glimpse(mdata)
@@ -177,6 +85,7 @@ names(celFiles) <- celFiles %>%
 
 head(celFiles)
 ```
+
 Rearranging rows of metadata to fit the order of the celfiles.
 
 ```{r}
@@ -213,18 +122,29 @@ head(mdata_subset)
 ```
 
 ```{r}
-# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
 ```
 
 
-```{r}
-# saveRDS(object = rawData, "rawData.RDS")
-rawData <- readRDS("rawData.RDS")
-```
 
 # Getting expression values from raw data
 
-```{r}
 
+```{r}
+rawData_summary <- rma(rawData, background = TRUE, normalize = FALSE)
 ```
 
+
+```{r}
+emat_df <- exprs(rawData_summary) %>% 
+  as_tibble(rownames = "ID")
+
+head(emat_df)
+```
+
+Write the expression matrix to be fed into GFS.
+
+```{r}
+emat_df %>% 
+  write_csv("dataframe_files/GSE76275_withoutQN.csv")
+```
