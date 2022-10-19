@@ -1,0 +1,254 @@
+---
+title: "Preprocess GSE43358, so that we can perform GFS on it separately"
+output: 
+  html_notebook:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+# Loading libraries
+
+
+```{r}
+library(oligo)
+library(tidyverse)
+```
+
+
+## GFS functions
+
+```{r}
+# Given a vector and the theta 1 and theta 2 values, return a vector with the fuzzy score
+fuzzy_score_ranks <- function(x, theta_1, theta_2){
+  ranked_x <- rank(desc(x))
+  q1 <- quantile(ranked_x, theta_1)
+  q2 <- quantile(ranked_x, theta_2)
+
+  q_diff <- q1 - q2
+  scored <- map_dbl(ranked_x, ~{
+    if(.x < q1){
+      return(1)
+    } else if(.x > q1 && .x <= q2){
+      fuzzy_score <- (.x - q2)/q_diff
+      return(fuzzy_score)
+    } else {
+      return(0)
+    }
+  })
+  return(scored)
+}
+```
+
+
+
+
+```{r}
+# given a matrix and theta 1 and theta 2, return a fuzzy-scored matrix
+## Uses the fuzzy_score_ranks function defined above on every column vector of the matrix
+perform_gfs <- function(emat, theta_1, theta_2){
+  sample_ids <- colnames(emat)
+  probe_ids <- rownames(emat)
+  # iterating over the columns of the matrix to return a list of vectors
+  scored_list <- map(1:ncol(emat), .f = ~{
+    col_values <- emat[, .x]
+    ranked_col <- rank(col_values)
+    scored_column <- fuzzy_score_ranks(ranked_col, theta_1, theta_2)
+    return(scored_column)
+  }, emat = emat)
+  # column bind the list of vectors to create a matrix
+  scored_mat <- do.call(cbind, scored_list)
+  # return the annotation to the new fuzzy-scored matrix
+  colnames(scored_mat) <- sample_ids
+  rownames(scored_mat) <- probe_ids
+  return(scored_mat)
+}
+```
+
+Create a test matrix.
+
+```{r}
+temp_emat <- replicate(n = 10, expr = sample(c(100:110), 10, replace = FALSE), simplify = TRUE)
+emat
+```
+
+Annotate the test matrix.
+
+```{r}
+sample_ids <- paste("sample", 1:10, sep = "_")
+colnames(temp_emat) <- sample_ids
+rownames(temp_emat) <- letters[1:10]
+temp_emat
+```
+
+
+```{r}
+perform_gfs(temp_emat, 0.10, 0.20)
+```
+
+# Prepare the metadata
+
+## Getting data from GEOquery
+
+```{r}
+# geodata <- GEOquery::getGEO(GEO = "GSE43358", destdir = "./tempfiles")
+# geodata <- GEOquery::getGEO(filename = "./tempfiles/GSE43358_series_matrix.txt.gz")
+```
+
+
+```{r}
+# saveRDS(geodata, "geodata_GSE43358.RDS")
+geodata <- readRDS("geodata_GSE43358.RDS")
+```
+
+
+```{r}
+mdata <- geodata %>%
+  phenoData() %>%
+  pData() %>% 
+  as_tibble()
+
+head(mdata)
+```
+
+```{r}
+# write_csv(mdata, "raw_mdata_GSE43358.csv")
+mdata <- read_csv("raw_mdata_GSE43358.csv")
+```
+
+
+## Cleaning the metadata
+
+
+```{r}
+mdata <- mdata %>% 
+  select(title, contains("date"), geo_accession, contains(":ch1"))
+
+cnames <- colnames(mdata)
+
+cnames_processed <- str_split(cnames, pattern = ":") %>% 
+  map_chr(~{.x[[1]]}) %>% 
+  str_replace_all(" ", "_") %>% 
+  str_replace_all("-", "_") %>% 
+  str_remove_all("\\(|\\)|,")
+
+cnames_processed
+
+colnames(mdata) <- cnames_processed
+rm(cnames, cnames_processed)
+  
+```
+
+```{r}
+glimpse(mdata)
+```
+Adding a new column to show triple negative status, rather than having to look at three different columns.
+
+```{r}
+mdata <- mdata %>% 
+  mutate(triple_negative_status = if_else(er == 0 & pgr == 0 & her2 == 0, "TN", "not TN") %>% factor(levels = c("not TN", "TN"))) %>% 
+  select(title, triple_negative_status, everything())
+head(mdata)
+```
+
+Adding a column to show subtype.
+
+```{r}
+mdata <- mdata %>% 
+  extract(title, into = c("subtype", "sample_number"), 
+          regex = "(.+)-(\\d+)", remove = FALSE) %>% 
+  select(-sample_number) %>% 
+  mutate(subtype = factor(subtype))
+
+head(mdata)
+```
+
+```{r}
+mdata <- select(mdata, geo_accession, everything())
+head(mdata)
+```
+
+
+# Reading in raw probe intensity data
+
+Celfiles downloaded from GEO and kept the folder "GSE43358_celfiles/"
+
+```{r}
+celFiles <- list.celfiles('GSE43358_celfiles', full.names = TRUE, listGzipped = TRUE)
+celFiles %>% head()
+```
+
+```{r}
+names(celFiles) <- celFiles %>% 
+  basename() %>% 
+  str_split("\\.") %>% 
+  map_chr(~{.x[1]}) %>% 
+  str_split("_") %>% 
+  map_chr(~{.x[1]}) 
+
+head(celFiles)
+```
+
+
+
+```{r}
+mdata <- mdata[match(mdata$geo_accession, names(celFiles)), ]
+```
+
+
+
+Getting only the relevant variables from the metadata.
+
+
+```{r}
+mdata_subset <- mdata %>%
+  select(geo_accession, 
+         title, 
+         triple_negative_status, 
+         subtype,
+         er,
+         her2,
+         pgr,
+         submission_date,
+         last_update_date) %>% 
+  mutate(across(where(is.character), .fns = factor)) %>% 
+  as.data.frame()
+
+
+rownames(mdata_subset) <- as.character(mdata_subset$geo_accession)
+
+head(mdata_subset)
+
+```
+
+```{r}
+# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+```
+
+
+```{r}
+# saveRDS(object = rawData, "rawData_GSE43358.RDS")
+rawData <- readRDS("rawData_GSE43358.RDS")
+```
+
+
+# Getting expression values from raw data
+
+```{r}
+rawData_summary <- rma(rawData, background = TRUE, normalize = FALSE)
+```
+
+
+```{r}
+emat_df <- exprs(rawData_summary) %>% 
+  as_tibble(rownames = "ID")
+
+head(emat_df)
+```
+
+```{r}
+emat_df %>% 
+  write_csv("dataframe_files/GSE43358_withoutQN.csv")
+```
+
+
