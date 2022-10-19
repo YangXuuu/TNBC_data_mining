@@ -17,7 +17,6 @@ library(tidyverse)
 library(ggsci)
 library(factoextra)
 library(pheatmap)
-library(dendextend)
 library(caret)
 library(RColorBrewer)
 library(viridis)
@@ -45,43 +44,30 @@ min_max_mat <- function(mat){
 # Getting data from GEOquery
 
 ```{r}
-# geodata <- GEOquery::getGEO(GEO = "GSE76275", destdir = "./tempfiles")
-# geodata <- GEOquery::getGEO(filename = "./tempfiles/GSE76275_series_matrix.txt.gz")
+geodata <- GEOquery::getGEO(GEO = "GSE76275", destdir = "./tempfiles")
 ```
 
 
 ```{r}
-# saveRDS(geodata, "geodata.RDS")
-geodata <- readRDS("geodata.RDS")
+mdata <- geodata %>%
+  pluck(1) %>%
+  phenoData() %>%
+  pData() %>% as_tibble()
 ```
 
 
 ```{r}
-# mdata <- geodata %>% 
-#   pluck(1) %>% 
-#   phenoData() %>%
-#   pData() %>% as_tibble()
-```
-
-
-```{r}
-# feature_data <- geodata %>% 
-#   pluck(1) %>% 
-#   featureData()
+feature_data <- geodata %>%
+  pluck(1) %>%
+  featureData()
   
 ```
 
 
 ```{r}
-# write_csv(mdata, "raw_mdata.csv")
-mdata <- read_csv("raw_mdata.csv")
+write_csv(mdata, "raw_mdata.csv")
 ```
 
-
-```{r}
-# saveRDS(feature_data, "featureData.RDS")
-# feature_data <- readRDS("featureData.RDS")
-```
 
 # Inspecting and cleaning the metadata
 
@@ -145,7 +131,7 @@ head(mdata)
 
 # Reading in raw probe intensity data
 
-Celfiles downloaded from GEO and kept the folder celfiles/
+Celfiles downloaded from GEO and kept the folder "celfiles/".
 
 ```{r}
 celFiles <- list.celfiles('celfiles/', full.names = TRUE, listGzipped = TRUE)
@@ -201,17 +187,11 @@ head(mdata_subset)
 ```
 
 ```{r}
-# rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
 ```
 
 
-```{r}
-# saveRDS(object = rawData, "rawData.RDS")
-rawData <- readRDS("rawData.RDS")
-```
-
-
-  Looking at the dimensions of the raw expression matrix.
+Looking at the dimensions of the raw expression matrix.
 
 ```{r}
 exprs(rawData) %>% dim()
@@ -429,21 +409,17 @@ ggsave("plots/exploration_plots/GSE76275_nonTNBC_upset.png")
 ## Using regular RMA on data (without separating by class)
 
 ```{r}
-# res_1 <- rma(rawData)
+res_1 <- rma(rawData)
 ```
 
-
-```{r}
-# saveRDS(object = res_1, "res_1.RDS")
-res_1 <- readRDS("res_1.RDS")
-```
-
+Looking at the dimensions of the expression matrix after RMA.
 
 ```{r}
 exprs(res_1) %>% 
   dim()
 ```
 
+Looking at the first 5 rows and columns.
 
 ```{r}
 exprs(res_1)[1:5, 1:5]
@@ -487,19 +463,9 @@ dim(mdata_subset_nontnbc)
 Reading in the TNBC files.
 
 ```{r}
-# rawData_tnbc <- read.celfiles(filenames = celFiles[tnbc_samples], 
-#                               phenoData = AnnotatedDataFrame(mdata_subset_tnbc))
-# 
-# rawData_tnbc
-```
+rawData_tnbc <- read.celfiles(filenames = celFiles[tnbc_samples],
+                              phenoData = AnnotatedDataFrame(mdata_subset_tnbc))
 
-
-```{r}
-# saveRDS(rawData_tnbc, file = "rawData_tnbc.RDS")
-rawData_tnbc <- readRDS(file = "rawData_tnbc.RDS")
-```
-
-```{r}
 rawData_tnbc
 ```
 
@@ -507,18 +473,12 @@ rawData_tnbc
 Reading in the nonTNBC files.
 
 ```{r}
-# rawData_nontnbc <- read.celfiles(filenames = celFiles[nontnbc_samples], 
-#                               phenoData = AnnotatedDataFrame(mdata_subset_nontnbc))
-# 
-# rawData_nontnbc
+rawData_nontnbc <- read.celfiles(filenames = celFiles[nontnbc_samples],
+                              phenoData = AnnotatedDataFrame(mdata_subset_nontnbc))
+
+rawData_nontnbc
 ```
 
-
-
-```{r}
-# saveRDS(rawData_nontnbc, file = "rawData_nontnbc.RDS")
-rawData_nontnbc <- readRDS(file = "rawData_nontnbc.RDS")
-```
 
 
 ```{r}
@@ -529,26 +489,14 @@ rawData_nontnbc
 Performing RMA on TNBC data.
 
 ```{r}
-# res_tnbc <- rma(rawData_tnbc)
-```
-
-
-```{r}
-# saveRDS(res_tnbc, file = "res_tnbc.RDS")
-res_tnbc <- readRDS(file = "res_tnbc.RDS")
+res_tnbc <- rma(rawData_tnbc)
 ```
 
 
 Performing RMA on nonTNBC data.
 
 ```{r}
-# res_nontnbc <- rma(rawData_nontnbc)
-```
-
-
-```{r}
-# saveRDS(res_nontnbc, file = "res_nontnbc.RDS")
-res_nontnbc <- readRDS(file = "res_nontnbc.RDS")
+res_nontnbc <- rma(rawData_nontnbc)
 ```
 
 
@@ -558,6 +506,7 @@ Combining the expression matrices of TNBC and nonTNBC data after separate RMA.
 res_joint <- cbind(exprs(res_tnbc), exprs(res_nontnbc))
 ```
 
+Looking at the first 5 rows and columns of the combined expression matrices.
 
 ```{r}
 res_joint[1:5, 1:5]
@@ -610,11 +559,6 @@ res_1_df_long <- res_1 %>%
 ```
 
 
-```{r}
-# saveRDS(object = res_1_df_long, "res_1_df_long.RDS")
-res_1_df_long <- readRDS("res_1_df_long.RDS")
-```
-
 
 ```{r}
 p2 <- res_1_df_long %>% 
@@ -636,7 +580,6 @@ p2 <- p2 + labs(x = "samples",
 p2
   
 ```
-
 
 ```{r}
 ggsave("plots/exploration_plots/GSE76275_post_regQN_boxplots.png", 
@@ -703,25 +646,6 @@ ggsave("plots/exploration_plots/GSE76275_post_classQN_boxplots.png",
 ```
 
 
-```{r}
-res_joint_df_long %>% 
-  left_join(., mdata_subset, by = c("sample_id" = "geo_accession")) %>% 
-  mutate(sample_id = factor(sample_id)) %>% 
-  ggplot() +
-   geom_boxplot(mapping = aes(x = reorder(sample_id, as.numeric(set)), y = intensity, fill = set), outlier.size = 0.2) +
-labs(x = "samples", 
-       title = str_wrap("Sample-wise log2 intensity boxplots for class-specific quantile normalization for GSE76275", 60)) +
-scale_fill_npg(name = "Triple Negative Status") +
-  theme_light() +
-  theme(axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        title = element_text(size = 10),
-        legend.position = "right", 
-        legend.direction = "vertical")
-
-ggsave("plots/exploration_plots/GSE76275_post_classQN_boxplots_bad.png", units = "cm", width = 20, height = 10)
-```
-
 
 # Performing PCA
 
@@ -745,16 +669,10 @@ get_pca_annot_df <- function(pca.obj, sample_id_col, mdata_df){
 ## Performing PCA on regular RMA data
 
 ```{r}
-# pca.res_1 <- res_1 %>% 
-#   exprs() %>% 
-#   t() %>% 
-#   prcomp(center = TRUE, scale = TRUE)
-```
-
-
-```{r}
-# saveRDS(pca.res_1, "pca_res1.RDS")
-pca.res_1 <- readRDS("pca_res1.RDS")
+pca.res_1 <- res_1 %>%
+  exprs() %>%
+  t() %>%
+  prcomp(center = TRUE, scale = TRUE)
 ```
 
 
@@ -783,6 +701,7 @@ ggsave("plots/exploration_plots/PCA_wholeQN_scree.png", bg = "white")
 ```
 
 Superimposing variables in data upon sample PCA scores.
+
 The PCA does not seem to separate the TNBC and nonTNBC samples that well when regular RMA is performed.
 
 ```{r}
@@ -822,23 +741,6 @@ ggplot(pca.res_1.annot_df) +
         axis.line = element_line(colour = "black", size = 0.5))
 
 ggsave("plots/exploration_plots/PCA_wholeQN_set.png", bg = "white")
-```
-
-There does not seem to be too strong of a batch effect according to submission date.
-
-```{r}
-ggplot(pca.res_1.annot_df) + 
-  geom_point(mapping = aes(x = PC1, y = PC2, colour = submission_date)) +
-    ggtitle("Samples in first two PCs, \ncoloured by submission date for whole QN") +
-  guides(colour = guide_legend(override.aes = list(size= 4))) +
-  theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5))
-
-ggsave("plots/exploration_plots/PCA_wholeQN_set.png")
 ```
 
 
