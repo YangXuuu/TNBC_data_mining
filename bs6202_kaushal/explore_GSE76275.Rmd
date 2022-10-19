@@ -852,96 +852,6 @@ ggsave("plots/exploration_plots/PCA_classQN_TNBC_date.png")
 
 
 
-```{r}
-ggplot(pca.res_joint.annot_df) + 
-  geom_point(mapping = aes(x = PC1, y = PC2, colour = tnbc_subtype)) +
-    ggtitle(str_wrap("Samples in first two PCs, coloured by subtype of TNBC for GSE76275 after class-specific quantile normalization", 60)) +
-   scale_color_nejm(name = "TNBC Subtype") +
-  guides(colour = guide_legend(override.aes = list(size= 4))) +
-  theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5),
-        legend.text = element_text(size = 5), 
-        legend.key.height = unit(x = 0.3, units = "cm"),
-        legend.key.width = unit(x = 0.3, units = "cm")) +
-  guides(color = guide_legend(override.aes = list(size = 1)))
-
-ggsave("plots/exploration_plots/PCA_classQN_TNBC_subtype.png")
-```
-
-```{r}
-ggplot(pca.res_joint.annot_df) + 
-  geom_point(mapping = aes(x = PC1, y = PC2,
-                           colour = factor(pr), shape = triple_negative_status)) +
-    ggtitle(str_wrap("Samples in first two PCs, coloured by progesterone receptor status for GSE76275 after class-specific quantile normalization", 60)) +
-  scale_color_npg(name = "Progesterone Receptor Status") +
-  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
-  guides(colour = guide_legend(override.aes = list(size= 4))) +
-  theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5),
-        legend.title = element_text(size = 7),
-        legend.text = element_text(size = 5), 
-        legend.key.height = unit(x = 0.3, units = "cm"),
-        legend.key.width = unit(x = 0.3, units = "cm")) +
-    guides(color = guide_legend(override.aes = list(size = 1)))
-
-
-ggsave("plots/exploration_plots/PCA_classQN_pr_GSE76275.png", bg= "white")
-```
-
-```{r}
-ggplot(pca.res_joint.annot_df) + 
-  geom_point(mapping = aes(x = PC1, y = PC2,
-                           colour = factor(her2), shape = triple_negative_status)) +
-    ggtitle(str_wrap("Samples in first two PCs, coloured by HER2 amplification status for GSE76275 after class-specific quantile normalization", 60)) +
-  scale_color_nejm(name = "HER2 Amplification Status") +
-  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
-  theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5),
-        legend.title = element_text(size = 7),
-        legend.text = element_text(size = 5), 
-        legend.key.height = unit(x = 0.3, units = "cm"),
-        legend.key.width = unit(x = 0.3, units = "cm")) + 
-      guides(color = guide_legend(override.aes = list(size = 1)))
-
-ggsave("plots/exploration_plots/PCA_classQN_her2_GSE76275.png", bg = "white")
-```
-
-```{r}
-ggplot(pca.res_joint.annot_df) + 
-  geom_point(mapping = aes(x = PC1, y = PC2,
-                           colour = factor(er), shape = triple_negative_status)) +
-    ggtitle(str_wrap("Samples in first two PCs, coloured by estrogen receptor status for GSE76275 after class-specific quantile normalization", 60)) +
-  scale_color_npg(name = "Estrogen Receptor Status") +
-  scale_shape_manual(name = "Triple Negative Status", values = c("TN" = 17, "not TN" = 1)) +
-  guides(colour = guide_legend(override.aes = list(size= 4))) +
-  theme(axis.text.x = element_text(angle = 90, size = 7),
-               title = element_text(size = 10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(colour = "black", size = 0.5),
-        legend.title = element_text(size = 7),
-        legend.text = element_text(size = 5), 
-        legend.key.height = unit(x = 0.3, units = "cm"),
-        legend.key.width = unit(x = 0.3, units = "cm")) + 
-      guides(color = guide_legend(override.aes = list(size = 1)))
-
-
-ggsave("plots/exploration_plots/PCA_classQN_er_GSE76275.png")
-```
-
 # Performing hierarchical clustering
 
 ## Getting distances
@@ -959,121 +869,12 @@ Getting distances after performing min max normalization.
 
 
 ```{r}
-# res_1_dists <- exprs(res_1) %>% 
-#   t() %>% 
-#   perform_min_max() %>% 
-#   dist(method = "euclidean")
+res_joint_dists <- res_joint %>%
+    t() %>%
+  perform_min_max() %>%
+  dist(method = "euclidean")
   
 ```
-
-
-```{r}
-# saveRDS(res_1_dists, "res_1_dists.RDS")
-res_1_dists <- readRDS("res_1_dists.RDS")
-```
-
-
-
-```{r}
-# res_joint_dists <- res_joint %>% 
-#     t() %>% 
-#   perform_min_max() %>% 
-#   dist(method = "euclidean")
-  
-```
-
-
-```{r}
-# saveRDS(res_joint_dists, "res_joint_dists.RDS")
-res_joint_dists <- readRDS("res_joint_dists.RDS")
-```
-
-
-
-## Using dendrograms
-
-```{r}
-res_1_dend <- res_1_dists %>% 
-  hclust() %>% 
-  as.dendrogram()
-```
-
-
-```{r}
-res_joint_dend <- res_joint_dists %>%
-  hclust() %>% 
-  as.dendrogram()
-```
-
- 
-```{r}
-library(dendextend)
-```
-
-
-```{r}
-# res_1_dend %>% 
-#   labels()
-```
-
-
-```{r}
-# res_1_dend %>% 
-#   order.dendrogram()
-```
-
-```{r}
-# (res_1 %>% 
-#   exprs() %>% 
-#   colnames())[28]
-  
-```
-
-
-```{r}
-res_1_dend_laborder <- res_1_dend %>% 
-  labels()
-
-```
-
-
-```{r}
-mycolors <- ifelse(mdata_subset[res_1_dend_laborder, ]$triple_negative_status == "TN", "forestgreen", "maroon")
-```
-
-
-
-```{r}
-par(mar = c(10,2,1,1))
-res_1_dend %>% 
-  set("labels_cex", 0.1) %>% 
-  plot()
-
-colored_bars(colors = mycolors, dend = res_1_dend, rowLabels = "TN Status", add = TRUE)
-```
-
-
-```{r}
-res_joint_dend_laborder <- res_joint_dend %>% 
-  labels()
-```
-
-
-```{r}
-mycolors <- ifelse(mdata_subset[res_joint_dend_laborder, ]$triple_negative_status == "TN", "forestgreen", "maroon")
-```
-
-
-
-```{r}
-par(mar = c(10,2,1,1))
-res_joint_dend %>% 
-  set("labels_cex", 0.1) %>% 
-  plot()
-
-colored_bars(colors = mycolors, dend = res_joint_dend, rowLabels = "TN Status", add = TRUE)
-```
-
 
 ## Using heatmaps
 
@@ -1144,135 +945,6 @@ pheatmap(.,
 
 # Performing SVA
 
-## Performing SVA on regular RMA data
-
-
-```{r}
-full_mod <- mdata_subset %>% 
-  select(geo_accession, triple_negative_status) %>% 
-  arrange(triple_negative_status) %>% 
-  model.matrix(~triple_negative_status, data = .)
-
-head(full_mod)
-```
-
-
-```{r}
-red_mod <- model.matrix(~1, data = mdata_subset)
-
-head(red_mod)
-```
-
-Get number of significant surrogate variables.
-
-```{r}
-n.sv.wholeQN <- num.sv(exprs(res_1), full_mod, method="leek")
-```
-
-
-```{r}
-n.sv.wholeQN
-```
-
-
-```{r}
-svobj.wholeQN <- sva(exprs(res_1), mod = full_mod, mod0 = red_mod, n.sv = 1)
-```
-
-
-```{r}
-sv_df.wholeQN <- tibble("geo_accession" = colnames(exprs(res_1)), "sv" = svobj.wholeQN$sv)
-
-head(sv_df.wholeQN)
-```
-
-
-
-```{r}
-left_join(sv_df.wholeQN, mdata, by = "geo_accession") %>% 
-  mutate(index = 5) %>% 
-  ggplot() +
-  # geom_col(mapping = aes(y = fct_reorder(geo_accession, sv, .fun = function(x){x}), x = sv, fill = set)) +
-  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = set)) +
-  theme_light() +
-  labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
-  
-
-# ggsave("plots/exploration_plots/sva_grouping_normalRMA.png")
-```
-
-
-## Performing SVA on class-specific quantile normalized data
-
-Create full model matrix.
-
-```{r}
-full_mod <- mdata_subset %>% 
-  select(geo_accession, triple_negative_status) %>% 
-  arrange(triple_negative_status) %>% 
-  model.matrix(~triple_negative_status, data = .)
-
-head(full_mod)
-```
-
-Create reduced model matrix.
-
-```{r}
-red_mod <- model.matrix(~1, data = mdata_subset)
-
-head(red_mod)
-```
-
-Get number of significant surrogate variables.
-
-```{r}
-n.sv.classQN <- num.sv(res_joint, full_mod, method="leek")
-```
-
-
-```{r}
-n.sv.classQN
-```
-
-
-Perform SVA on classQN-normalized expression matrix.
-
-```{r}
-svobj.classQN <- sva(res_joint, mod = full_mod, mod0 = red_mod, n.sv = n.sv.classQN)
-```
-
-
-```{r}
-sv_df.classQN <- tibble("geo_accession" = colnames(res_joint), "sv" = svobj.classQN$sv)
-
-head(sv_df.classQN)
-```
-
-```{r}
-saveRDS(sv_df.classQN, "sv_df_classQN.RDS")
-# sv_df.classQN <- readRDS("sv_df_classQN.RDS")
-```
-
-
-```{r}
-sv_df.classQN <- left_join(sv_df.classQN , mdata, by = "geo_accession")
-```
-
-
-```{r}
-sv_df.classQN %>% 
-ggplot() +
-  geom_boxplot(mapping = aes(x = submission_date, y = sv, fill = er)) +
-  # geom_point(mapping = aes(x = submission_date, y = sv, color = er)) +
-  theme_light() 
-  # labs(y = "Surrogate Variable Value", title = "Distribution of latent variable estimated by SVA for different grouping factors")
-  
-
-# ggsave("plots/exploration_plots/sva_grouping_classQN.png")
-```
-
-
-# Trying to see if the SVA estimates a batch when QN is not applied
 
 In this attempt, I perform no quantile normalization while performing RMA. If QN has not been performed and a surrogate variable shows up that corresponds to batch, batch effects are probably present.
 
@@ -1280,10 +952,6 @@ In this attempt, I perform no quantile normalization while performing RMA. If QN
 rawData.summary <- rma(rawData, background = TRUE, normalize = FALSE)
 ```
 
-```{r}
-# saveRDS(rawData.summary, "rawData_summary.RDS")
-rawData.summary <- readRDS("rawData_summary.RDS")
-```
 
 
 ```{r}
@@ -1293,12 +961,6 @@ rawData.summary_df_long <- rawData.summary %>%
   pivot_longer(cols = all_of(c(tnbc_samples, nontnbc_samples)), names_to = "sample_id", 
                values_to = "intensity") %>% 
   left_join(., mdata_subset, by = c("sample_id" = "geo_accession"))
-```
-
-
-```{r}
-# saveRDS(rawData.summary_df_long, "rawData_summary_df_long.RDS")
-rawData.summary_df_long <- readRDS("rawData_summary_df_long.RDS")
 ```
 
 
@@ -1374,11 +1036,6 @@ svobj.nonorm <- sva(exprs(rawData.summary), mod = full_mod, mod0 = red_mod, n.sv
 sv_df.nonorm <- tibble("geo_accession" = colnames(exprs(rawData.summary)), "sv" = svobj.nonorm$sv)
 
 head(sv_df.nonorm)
-```
-
-```{r}
-saveRDS(sv_df.nonorm, "sv_df_nonorm.RDS")
-# sv_df.nonorm <- readRDS("sv_df_nonorm.RDS")
 ```
 
 
