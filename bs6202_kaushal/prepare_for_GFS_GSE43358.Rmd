@@ -1,0 +1,163 @@
+---
+title: "Preprocess GSE43358, so that we can perform GFS on it separately"
+output: 
+  html_notebook:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+# Loading libraries
+
+
+```{r}
+library(GEOquery)
+library(oligo)
+library(tidyverse)
+```
+
+
+# Prepare the metadata
+
+## Getting data from GEOquery
+
+```{r}
+geodata <- GEOquery::getGEO(GEO = "GSE43358", destdir = "./tempfiles")
+```
+
+
+```{r}
+mdata <- geodata %>%
+  phenoData() %>%
+  pData() %>% 
+  as_tibble()
+
+head(mdata)
+```
+
+
+## Cleaning the metadata
+
+
+```{r}
+mdata <- mdata %>% 
+  select(title, contains("date"), geo_accession, contains(":ch1"))
+
+cnames <- colnames(mdata)
+
+cnames_processed <- str_split(cnames, pattern = ":") %>% 
+  map_chr(~{.x[[1]]}) %>% 
+  str_replace_all(" ", "_") %>% 
+  str_replace_all("-", "_") %>% 
+  str_remove_all("\\(|\\)|,")
+
+cnames_processed
+
+colnames(mdata) <- cnames_processed
+rm(cnames, cnames_processed)
+  
+```
+
+```{r}
+glimpse(mdata)
+```
+Adding a new column to show triple negative status, rather than having to look at three different columns.
+
+```{r}
+mdata <- mdata %>% 
+  mutate(triple_negative_status = if_else(er == 0 & pgr == 0 & her2 == 0, "TN", "not TN") %>% factor(levels = c("not TN", "TN"))) %>% 
+  select(title, triple_negative_status, everything())
+head(mdata)
+```
+
+Adding a column to show subtype.
+
+```{r}
+mdata <- mdata %>% 
+  extract(title, into = c("subtype", "sample_number"), 
+          regex = "(.+)-(\\d+)", remove = FALSE) %>% 
+  select(-sample_number) %>% 
+  mutate(subtype = factor(subtype))
+
+head(mdata)
+```
+
+```{r}
+mdata <- select(mdata, geo_accession, everything())
+head(mdata)
+```
+
+
+# Reading in raw probe intensity data
+
+Celfiles downloaded from GEO and kept the folder "GSE43358_celfiles/"
+
+```{r}
+celFiles <- list.celfiles('GSE43358_celfiles', full.names = TRUE, listGzipped = TRUE)
+celFiles %>% head()
+```
+
+```{r}
+names(celFiles) <- celFiles %>% 
+  basename() %>% 
+  str_split("\\.") %>% 
+  map_chr(~{.x[1]}) %>% 
+  str_split("_") %>% 
+  map_chr(~{.x[1]}) 
+
+head(celFiles)
+```
+
+```{r}
+mdata <- mdata[match(mdata$geo_accession, names(celFiles)), ]
+```
+
+Getting only the relevant variables from the metadata.
+
+
+```{r}
+mdata_subset <- mdata %>%
+  select(geo_accession, 
+         title, 
+         triple_negative_status, 
+         subtype,
+         er,
+         her2,
+         pgr,
+         submission_date,
+         last_update_date) %>% 
+  mutate(across(where(is.character), .fns = factor)) %>% 
+  as.data.frame()
+
+
+rownames(mdata_subset) <- as.character(mdata_subset$geo_accession)
+
+head(mdata_subset)
+
+```
+
+```{r}
+rawData <- read.celfiles(celFiles, phenoData = AnnotatedDataFrame(mdata_subset))
+```
+
+
+# Getting expression values from raw data
+
+```{r}
+rawData_summary <- rma(rawData, background = TRUE, normalize = FALSE)
+```
+
+
+```{r}
+emat_df <- exprs(rawData_summary) %>% 
+  as_tibble(rownames = "ID")
+
+head(emat_df)
+```
+
+```{r}
+emat_df %>% 
+  write_csv("dataframe_files/GSE43358_withoutQN.csv")
+```
+
+
